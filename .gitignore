@@ -1,0 +1,13 @@
+# Machine specific - always exclude
+.metadata/
+
+# Build outputs
+Debug/
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.lst
+*.su
