@@ -4,7 +4,7 @@ import time
 import numpy as np
  
 # Config
-PORT        = 'COM3'        # Change to your Processing STM32's COM port
+PORT        = 'COM6'        # Change to your Processing STM32's COM port
 BAUD_RATE   = 115200        # Must match the STM32's UART baud rate
 SAMPLE_RATE = 10000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
 DURATION_S  = 5             # Hard-coded recording length in seconds (PLEASE CHANGE TO MATCH AUDIO FILE)

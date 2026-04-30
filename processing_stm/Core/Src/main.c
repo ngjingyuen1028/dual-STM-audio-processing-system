@@ -67,6 +67,7 @@ uint8_t cumulative_sample;
 /* USER CODE BEGIN 0 */
 const uint8_t window_size = 2;
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
 	if (huart->Instance == USART1) {
 		counter++;
 		if (counter == window_size){ // loops the counter around for each index in the window size
@@ -87,7 +88,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 			initialise ++;
 		}
 
-		HAL_UART_Receive_DMA(&huart1, rxBuffer+counter, 1);
+        HAL_StatusTypeDef status = HAL_UART_Receive_DMA(&huart1, rxBuffer + counter, 1);
+        if (status != HAL_OK) {
+            HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET); // lights up if re-arm fails
+        }
 	}
 }
 
@@ -133,6 +137,7 @@ int main(void)
 
 
   HAL_UART_Receive_DMA(&huart1, rxBuffer + counter, 1);
+  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 0);
 
   /* USER CODE END 2 */
 
@@ -314,7 +319,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : Test_Pin */
+  GPIO_InitStruct.Pin = Test_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(Test_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LD3_Pin */
   GPIO_InitStruct.Pin = LD3_Pin;
