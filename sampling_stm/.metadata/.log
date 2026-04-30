@@ -16,3 +16,64 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64
 
 !ENTRY org.eclipse.cdt.core 1 0 2026-04-29 17:36:21.492
 !MESSAGE Indexed 'task_1' (23 sources, 83 headers) in 4.58 sec: 5,567 declarations; 28,994 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0058%)
+!SESSION 2026-04-30 12:31:25.867 -----------------------------------------------
+eclipse.buildId=Version 1.18.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_MY
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2026-04-30 12:31:51.023
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-04-30 12:31:51.026
+!MESSAGE Log4j2 initialized with config file C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\Project2\sampling_stm\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-04-30 12:32:10.638
+!MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2026-04-30 12:33:51.576 -----------------------------------------------
+eclipse.buildId=Version 1.18.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_MY
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2026-04-30 12:34:09.714
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-04-30 12:34:09.717
+!MESSAGE Log4j2 initialized with config file C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\Project2\sampling_stm\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-04-30 12:34:26.193
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.core.jobs 2 2 2026-04-30 12:34:32.875
+!MESSAGE Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: org.eclipse.ui.internal.Workbench$39 RUNNING
+	 at org.apache.xerces.impl.XMLScanner.scanAttributeValue(Unknown Source)
+	 at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanAttribute(Unknown Source)
+	 at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanStartElement(Unknown Source)
+	 at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl$FragmentContentDispatcher.dispatch(Unknown Source)
+	 at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source)
+	 at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	 at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source)
+	 at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+	 at org.apache.xerces.parsers.DOMParser.parse(Unknown Source)
+	 at org.apache.xerces.jaxp.DocumentBuilderImpl.parse(Unknown Source)
+	 at java.xml/javax.xml.parsers.DocumentBuilder.parse(DocumentBuilder.java:178)
+	 at com.st.microxplorer.plugins.updater.util.AbstractXmlFileManage.openXml(AbstractXmlFileManage.java:138)
+	 at com.st.microxplorer.plugins.updater.xml.UpdaterFile.readFile(UpdaterFile.java:121)
+	 at com.st.microxplorer.plugins.updater.engine.MainUpdater.checkUserFiles(MainUpdater.java:547)
+	 at com.st.microxplorer.plugins.updater.engine.MainUpdater.<init>(MainUpdater.java:281)
+	 at com.st.microxplorer.plugins.updater.Updater.initPhase2(Updater.java:1162)
+	 at com.st.microxplorer.plugins.updater.Updater.setUserPreferencesHandler(Updater.java:1216)
+	 at com.st.stm32cube.common.mx.core.CubeMxInstance.<init>(CubeMxInstance.java:141)
+	 at com.st.stm32cube.common.mx.core.CubeMxInstance.getInstance(CubeMxInstance.java:91)
+	 at com.st.stm32cube.common.mx.userauth.UserAuthAdapter.<init>(UserAuthAdapter.java:25)
+	 at com.st.stm32cube.common.mx.userauth.UserAuthProvider.getUserAuthAdapter(UserAuthProvider.java:16)
+	 at com.st.stm32cube.common.ecosystemintegration.ui.core.MCUEcoSystemIntegrationUiHelper.getUserAuth(MCUEcoSystemIntegrationUiHelper.java:100)
+	 at com.st.stm32cube.ide.mcu.userauth.UserAuthStartup.earlyStartup(UserAuthStartup.java:32)
+	 at org.eclipse.ui.internal.EarlyStartupRunnable.runEarlyStartup(EarlyStartupRunnable.java:79)
+	 at org.eclipse.ui.internal.EarlyStartupRunnable.run(EarlyStartupRunnable.java:55)
+	 at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:47)
+	 at org.eclipse.ui.internal.Workbench$39.run(Workbench.java:2733)
+	 at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
