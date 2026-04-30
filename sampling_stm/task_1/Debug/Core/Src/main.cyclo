@@ -1,0 +1,15 @@
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_spi.h:439:22:LL_SPI_SetStandard	1
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_spi.h:875:22:LL_SPI_EnableNSSPulseMgt	1
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_bus.h:563:22:LL_AHB2_GRP1_EnableClock	1
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_ll_bus.h:1673:22:LL_APB2_GRP1_EnableClock	1
+../Core/Src/main.c:68:6:HAL_ADC_ConvCpltCallback	1
+../Core/Src/main.c:75:6:HAL_TIM_PeriodElapsedCallback	1
+../Core/Src/main.c:85:5:main	1
+../Core/Src/main.c:141:6:SystemClock_Config	4
+../Core/Src/main.c:202:13:MX_ADC1_Init	3
+../Core/Src/main.c:260:13:MX_SPI1_Init	1
+../Core/Src/main.c:316:13:MX_TIM1_Init	4
+../Core/Src/main.c:363:13:MX_USART1_UART_Init	2
+../Core/Src/main.c:398:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:433:13:MX_GPIO_Init	1
+../Core/Src/main.c:478:6:Error_Handler	1
