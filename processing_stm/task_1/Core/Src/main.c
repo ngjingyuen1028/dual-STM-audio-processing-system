@@ -40,9 +40,11 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi1;
+DMA_HandleTypeDef hdma_spi1_rx;
+
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
-DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
@@ -60,22 +62,29 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_SPI1_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-const uint8_t window_size = 2;
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-	HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
-	if (huart->Instance == USART1) {
+const uint8_t window_size = 12;
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
+//	HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
+//  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
+
+	if (hspi->Instance == SPI1) {
+
 		counter++;
 		if (counter == window_size){ // loops the counter around for each index in the window size
 			counter = 0;
+//				HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
+
 		}
 		if (initialise >= window_size-1) // doesn't send first few datapoints until average can be computed
 		{
+			HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
 			cumulative_sample = 0; // calculates average
 			for (uint8_t i = 0; i < window_size; i++)
 			{
@@ -85,14 +94,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 			average = (uint8_t)cumulative_sample/window_size;
 
 			HAL_UART_Transmit_DMA(&huart2, &average, 1);
+			 HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,0);
+
 		} else {
 			initialise ++;
 		}
 
-        HAL_StatusTypeDef status = HAL_UART_Receive_DMA(&huart1, rxBuffer + counter, 1);
-        if (status != HAL_OK) {
-            HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_SET); // lights up if re-arm fails
-        }
+		HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
+
 	}
 }
 
@@ -132,23 +141,28 @@ int main(void)
   MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_USART1_UART_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
+  __HAL_SPI_ENABLE(&hspi1);  // ← add this line BEFORE the DMA call
+  HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
 
-
-
-  HAL_UART_Receive_DMA(&huart1, rxBuffer + counter, 1);
-  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 0);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+  while(1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+//	  HAL_SPI_Receive(&hspi1, rxBuffer,1, HAL_MAX_DELAY);
+//	  if (rxBuffer[0] == 67){
+//		  HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
+//
+//	  }
+
   }
   /* USER CODE END 3 */
 }
@@ -211,6 +225,45 @@ void SystemClock_Config(void)
   /** Enable MSI Auto calibration
   */
   HAL_RCCEx_EnableMSIPLLMode();
+}
+
+/**
+  * @brief SPI1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_SPI1_Init(void)
+{
+
+  /* USER CODE BEGIN SPI1_Init 0 */
+
+  /* USER CODE END SPI1_Init 0 */
+
+  /* USER CODE BEGIN SPI1_Init 1 */
+
+  /* USER CODE END SPI1_Init 1 */
+  /* SPI1 parameter configuration*/
+  hspi1.Instance = SPI1;
+  hspi1.Init.Mode = SPI_MODE_SLAVE;
+  hspi1.Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
+  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.NSS = SPI_NSS_HARD_INPUT;
+  hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi1.Init.CRCPolynomial = 7;
+  hspi1.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
+  hspi1.Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
+  if (HAL_SPI_Init(&hspi1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN SPI1_Init 2 */
+
+  /* USER CODE END SPI1_Init 2 */
+
 }
 
 /**
@@ -293,9 +346,9 @@ static void MX_DMA_Init(void)
   __HAL_RCC_DMA1_CLK_ENABLE();
 
   /* DMA interrupt init */
-  /* DMA1_Channel5_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
+  /* DMA1_Channel2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel2_IRQn);
   /* DMA1_Channel7_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Channel7_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Channel7_IRQn);
