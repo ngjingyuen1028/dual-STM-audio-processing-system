@@ -51,20 +51,19 @@ def record(duration_s):
     ser.close()
     print("Receiving. Serial port closed.")
     
-    # ── Convert to numpy array ───────────────────────────────────────────────────
-    # The Processing STM32 has already applied the moving average filter.
-    # Samples arrive as raw 8-bit unsigned integers (0–255).
-    # No re-normalization needed — just cast directly to uint8.
+    #Convert to numpy array
     data = np.array(data)
-    # data = (data - data.min()) / data.max()  # scale to 0-1
-    # data = data * 255                         # scale to 0-255
-    data = data.astype(np.uint8)             # convert to uint8
- 
-# ── Write WAV file ───────────────────────────────────────────────────────────
-with wave.open(OUTPUT_FILE, 'wb') as wf:
-    wf.setnchannels(1)           # Mono
-    wf.setsampwidth(1)           # 8-bit samples = 1 byte per sample
-    wf.setframerate(SAMPLE_RATE) # Sample rate in Hz
-    wf.writeframes(data.tobytes())
- 
-print(f"Audio saved to '{OUTPUT_FILE}' ({len(data)} samples, {DURATION_S}s @ {SAMPLE_RATE} Hz)")
+    data = data.astype(np.uint8)# convert to uint8
+    
+    return data         
+
+def save_wav(duration_s):
+    #Write WAV file
+    filename = get_output_filename(duration_s)
+    with wave.open(OUTPUT_FILE, 'wb') as wf:
+        wf.setnchannels(1)           # Mono
+        wf.setsampwidth(1)           # 8-bit samples = 1 byte per sample
+        wf.setframerate(SAMPLE_RATE) # Sample rate in Hz
+        wf.writeframes(data.tobytes())
+    
+    print(f"Audio saved to '{OUTPUT_FILE}' ({len(data)} samples, {DURATION_S}s @ {SAMPLE_RATE} Hz)")
