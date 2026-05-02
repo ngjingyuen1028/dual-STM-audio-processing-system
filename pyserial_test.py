@@ -1,7 +1,8 @@
 import serial
 import time
 import numpy as np
-from manual_mode import send_manual_and_verify
+from manual_check import send_manual_and_verify
+from trigger_check import send_trigger_and_verify
 from stopstm import send_stop_and_verify
 from formatify import save_csv, save_plot, save_wav, prompt_output_format
 
@@ -91,7 +92,13 @@ def manual_recording_mode():
 
 
 
-
+def distance_trigger_mode():
+    print("\n" + "─" * 60)
+    print("  DISTANCE TRIGGER MODE")
+    print("─" * 60)
+    print(f"  Listening for ultrasonic trigger on {PORT}.")
+    print(f"  Press Ctrl+C to stop and return to the main menu.")
+    print("─" * 60)   
 
 
 def main_menu():
@@ -102,6 +109,7 @@ def main_menu():
         print("\n  MAIN MENU")
         print("  ─────────────────────────────")
         print("  [1] Manual Recording Mode")
+        print("  [2] Distance Triggering Mode")
         print("  [0] Exit")
         print("  ─────────────────────────────")
  
@@ -109,11 +117,13 @@ def main_menu():
  
         if choice == '1':
             manual_recording_mode()
+        elif choice == '2':
+            distance_trigger_mode()
         elif choice == '0':
             print("\n  Exiting. Goodbye!\n")
             break
         else:
-            print("  Invalid input. Please enter 1 or 0.")
+            print("  Invalid input. Please enter 1, 2 or 0.")
  
 # ── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == '__main__':
