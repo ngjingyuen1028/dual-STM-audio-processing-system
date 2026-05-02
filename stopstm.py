@@ -12,6 +12,7 @@
 
 import serial
 import time
+import sys
 
 # ── Configuration
 PORT             = 'COM3'    # Change to your Processing STM32's COM port
@@ -33,7 +34,7 @@ def send_stop_and_verify():
     except serial.SerialException as e:
         print(f"\n  [✗] Could not open serial port: {e}")
         print("  Check that the STM32 is connected and the PORT is correct.")
-        return False
+        sys.exit(1)
 
     time.sleep(1)   # Let the STM32 settle after connection opens
 
@@ -57,7 +58,7 @@ def send_stop_and_verify():
 
     if received_byte == CONFIRM_BYTE:
         # Correct confirmation byte received
-        print(f"\n  [✓] Confirmation received (0x{received_byte:02X}) — both STM32s have stopped.")
+        print(f"\n  [✓] Confirmation received — both STM32s have stopped.")
         print("  Safe to launch the CLI (audio_cli.py).")
         ser.close()
         return True
