@@ -2,6 +2,8 @@ import wave
 import serial
 import time
 import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
 from datetime import datetime
 from manual_mode import send_manual_and_verify
 from stopstm import send_stop_and_verify
@@ -10,7 +12,6 @@ from stopstm import send_stop_and_verify
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
 BAUD_RATE   = 115200        # Must match the STM32's UART baud rate
 SAMPLE_RATE = 10000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
-DURATION_S  = 10             # Hard-coded recording length in seconds (PLEASE CHANGE TO MATCH AUDIO FILE)
 OUTPUT_FILE = 'audio/task2.wav' # Change to WHEREVER YOU WANT
 TEAM_ID = 'J08'
 COMFIRM_BYTE = 0x1B
@@ -22,7 +23,7 @@ STOP_BYTE = 0x40
 def record(duration_s):
     total_samples = SAMPLE_RATE * duration_s  # Total number of bytes to read
     
-    print(f"Recording {DURATION_S}s of audio at {SAMPLE_RATE} sps ({total_samples} samples)...") #some random shi to make sure code is running
+    print(f"Recording {duration_s}s of audio at {SAMPLE_RATE} sps ({total_samples} samples)...") #some random shi to make sure code is running
     print(f"Opening serial port {PORT} at {BAUD_RATE} baud...") #same here
     
     ser = serial.Serial(PORT, BAUD_RATE)
@@ -51,9 +52,9 @@ def get_output_filename(duration_s):
     # Build a filename containing team ID, sample rate, duration, and timestamp.
     # Example: J08_2_8000sps_5s_20260430_142301.wav
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    return f"{TEAM_ID}_{SAMPLE_RATE}sps_{int(duration_s)}s_{timestamp}.wav"
+    return f"{TEAM_ID}_{SAMPLE_RATE}sps_{int(duration_s)}s_{timestamp}."
 
-def save_wav(duration_s):
+def save_wav(data, duration_s):
     #Write WAV file
     filename = get_output_filename(duration_s)
     with wave.open(OUTPUT_FILE, 'wb') as wf:
@@ -62,7 +63,65 @@ def save_wav(duration_s):
         wf.setframerate(SAMPLE_RATE) # Sample rate in Hz
         wf.writeframes(data.tobytes())
     
-        print(f"Audio saved to '{OUTPUT_FILE}' ({len(data)} samples, {DURATION_S}s")
+        print(f"Audio saved to '{OUTPUT_FILE}' ({len(data)} samples, {duration_s}s")
+
+def save_plot(data, duration_s):
+    filename = get_output_filename(duration_s, 'png')
+ 
+    # Build a time axis in seconds (one point per sample)
+    time_axis = np.linspace(0, len(data) / SAMPLE_RATE, num=len(data))
+ 
+    plt.figure(figsize=(12, 4))
+    plt.plot(time_axis, data, linewidth=0.5, color='steelblue')
+    plt.title(
+        f'Audio Waveform — Team {TEAM_ID}\n'
+        f'Sample Rate: {SAMPLE_RATE} Hz | Duration: {int(duration_s)}s',
+        fontsize=13
+    )
+    plt.xlabel('Time (s)', fontsize=11)
+    plt.ylabel('Amplitude (0–255)', fontsize=11)
+    plt.xlim([0, time_axis[-1]])
+    plt.ylim([0, 255])
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(filename, dpi=150)
+    print(f"  [✓] Waveform plot saved: {filename}")
+
+def save_csv(data, duration_s):
+    filename = get_output_filename(duration_s, 'csv')
+
+    df = pd.DataFrame(data, colums=['sample_value'])
+    df.to_csv(filename, index=False)
+
+    with open(filename, 'r') as f:
+        og = f.read()
+    with open(filename, 'w') as f:
+        f.write(f'Sample Rate: {SAMPLE_RATE} Hz\n' + og)
+    print(f"  [✓] CSV file saved: {filename}")
+
+def prompt_output_format():
+    print("\n  What format would you like to save?")
+    print("  Enter one or more numbers separated by spaces (e.g. '1 2').")
+    print("  ─────────────────────────────")
+    print("  [1] WAV file")
+    print("  [2] PNG waveform plot")
+    print("  [3] CSV file")
+    print("  [0] Discard recording — do not save anything")
+    print("  ─────────────────────────────")
+ 
+    valid = {'0', '1', '2', '3'}
+ 
+    while True:
+        raw = input("\n  Enter your choice(s): ").strip()
+        choices = set(raw.split())   # split on spaces, deduplicate
+ 
+        if not choices.issubset(valid):
+            print("  Invalid input. Only use 0, 1, 2, or 3 separated by spaces.")
+            continue
+        if '0' in choices and len(choices) > 1:
+            print("  Cannot combine [0] with other options. Enter 0 alone to discard.")
+            continue
+        return choices
 
 def manual_recording_mode():
 
@@ -92,7 +151,19 @@ def manual_recording_mode():
  
     # Record and save
     data = record(int(duration_s))
-    save_wav(data, int(duration_s))
+    
+    choices = prompt_output_format()
+ 
+    if '0' in choices or not choices:
+        print("\n  Recording discarded. Returning to main menu.")
+        return
+ 
+    if '1' in choices:
+        save_wav(data, int(duration_s))
+    if '2' in choices:
+        save_plot(data, int(duration_s))
+    if '3' in choices:
+        save_csv(data, int(duration_s))
  
     print("\n  Returning to main menu.")
 
