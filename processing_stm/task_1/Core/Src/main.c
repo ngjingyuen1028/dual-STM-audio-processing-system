@@ -26,6 +26,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef enum {
+    RUNNING,
+    WAIT_FOR_START
+} SystemState;
 
 /* USER CODE END PTD */
 
@@ -48,6 +52,15 @@ UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
+const uint8_t ZERO  = 0;
+const uint8_t STOP_INSTRUCTION = 64;
+const uint8_t RECEIVED_CONFIRMATION = 27;
+const uint8_t START = 255;
+
+SystemState state = RUNNING;
+uint8_t mode;
+uint8_t instruction;
+uint8_t received_confirmation;
 uint8_t rxBuffer[256];
 uint8_t average;
 uint8_t counter = 0;
@@ -70,6 +83,7 @@ static void MX_SPI1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 const uint8_t window_size = 12;
+
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 //	HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
 //  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
@@ -105,7 +119,55 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 	}
 }
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART2)
+    {
+    	if (instruction == STOP_INSTRUCTION && state == RUNNING){
+    		HAL_DMA_Abort_IT(&hdma_spi1_rx);
+    		HAL_DMA_Abort_IT(&hdma_usart2_tx);
+    		while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
+    		huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
+			HAL_UART_Transmit(&huart1, &instruction, 1, HAL_MAX_DELAY);    // send stop instruction to sampling stm
+			HAL_UART_Receive(&huart1, &received_confirmation, 1, HAL_MAX_DELAY);   // receive the confirmation from sampling stm
+			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
 
+			if (received_confirmation == RECEIVED_CONFIRMATION){
+				HAL_UART_Transmit(&huart2, &RECEIVED_CONFIRMATION, 1, HAL_MAX_DELAY);
+				HAL_UART_Receive(&huart2, &mode, 1, HAL_MAX_DELAY);    // receive mode from Laptop
+				if (mode == 17 || mode == 34){
+					HAL_UART_Transmit(&huart1, &mode, 1, HAL_MAX_DELAY);
+					HAL_UART_Receive(&huart1, &received_confirmation,1 , HAL_MAX_DELAY);   // from sampling stm
+					if (received_confirmation == RECEIVED_CONFIRMATION){
+						HAL_UART_Transmit(&huart2, &RECEIVED_CONFIRMATION, 1, HAL_MAX_DELAY);
+					} else{
+						// sampling stm didn't receive the mode properly
+					}
+				} else{
+					// incorrect mode values
+				}
+			} else{
+				// sampling stm didn't receive the stop instruction correctly
+			};
+
+			// will be at this line when processing & sampling stm is configured
+			// now waiting for laptop to start the sampling
+			state = WAIT_FOR_START;
+			HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt to wait for user start input
+
+    	}else if (instruction ==  START && state ==  WAIT_FOR_START){
+    		// reset all the needed parameter before opening the SPI DMA channel
+    		counter = 0;
+    		average = 0;
+    		initialise = 0;
+    		cumulative_sample = 0;
+    		state = RUNNING;
+    		hspi1.State = HAL_SPI_STATE_READY;
+    		HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
+			HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt so that user can stop the processing process in the stm
+    	}
+    }
+}
 
 /* USER CODE END 0 */
 
@@ -144,7 +206,8 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 
-  __HAL_SPI_ENABLE(&hspi1);  // ← add this line BEFORE the DMA call
+  __HAL_SPI_ENABLE(&hspi1);  // add this line BEFORE the DMA call
+  HAL_UART_Receive_IT(&huart2, &instruction, 1);
   HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
 
 
@@ -155,14 +218,11 @@ int main(void)
   while(1)
   {
     /* USER CODE END WHILE */
-
     /* USER CODE BEGIN 3 */
-//	  HAL_SPI_Receive(&hspi1, rxBuffer,1, HAL_MAX_DELAY);
-//	  if (rxBuffer[0] == 67){
-//		  HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
-//
-//	  }
-
+	  while( state == WAIT_FOR_START){
+		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+		HAL_Delay(500);
+	  }
   }
   /* USER CODE END 3 */
 }

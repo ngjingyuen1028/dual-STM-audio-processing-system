@@ -13,6 +13,27 @@ DURATION_S  = 5             # Hard-coded recording length in seconds (PLEASE CHA
 
 ser = serial.Serial(PORT, BAUD_RATE)
 
-head = ser.read(1)
-print(head.decode())
+ser.write(b'\x40')
+print("sending 1")
+
+# ser.reset_input_buffer()
+while True:
+    ser.reset_input_buffer()
+    confirmation = ser.read(1)
+    print(confirmation[0])  # prints 27
+    if confirmation[0] == 27:
+        break
+
+print("All stm stops properly")
+
+hold = input("Please enter :")
+ser.write(b'\x11')
+print("sending instruction mode")
+
+while True:
+    confirmation = ser.read(1)
+    print(confirmation[0])  # prints 27
+    if confirmation[0] == 27:
+        break
+
 

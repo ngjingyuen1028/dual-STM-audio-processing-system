@@ -26,7 +26,22 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef enum {
+    RUNNING,
+    WAIT_FOR_START
+} SystemState;
 
+typedef enum{
+	MANUAL_RECORDING,
+	DISTANCE_TRIGGERED
+} Mode;
+
+typedef enum{
+	IDLE,
+	TRIGGER_HIGH,
+	WAITING_FOR_ECHO,
+	ECHO_HIGH
+} SensorState;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -43,11 +58,27 @@
 ADC_HandleTypeDef hadc1;
 
 TIM_HandleTypeDef htim1;
+TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim16;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+
+const uint8_t STOP_INSTRUCTION = 64;
+const uint8_t RECEIVED_CONFIRMATION = 27;
+const uint8_t MANUAL_RECORDING_MODE = 17;
+const uint8_t DISTANCE_TRIGGERING_MODE = 34;
+
+SystemState state = RUNNING;
+Mode operation_mode = MANUAL_RECORDING;
+SensorState sensor = IDLE;
+uint8_t instruction;
+uint8_t received_confirmation;
+uint8_t mode;
+uint16_t echo_rising, echo_falling;
+
 static void SPI1_WriteByte(uint8_t tx_byte){
 	while(!LL_SPI_IsActiveFlag_TXE(SPI1)){;}
 	LL_SPI_TransmitData8(SPI1, tx_byte);
@@ -66,6 +97,8 @@ static void MX_ADC1_Init(void);
 static void MX_TIM1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_TIM16_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -76,13 +109,89 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 1);  // for debugging
 	uint8_t data = HAL_ADC_GetValue(&hadc1);
 	SPI1_WriteByte(data);
-//	HAL_UART_Transmit(&huart1, &data, 1, HAL_MAX_DELAY);
 	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 0);   // for debugging
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	HAL_GPIO_TogglePin(Counter_GPIO_Port, Counter_Pin);   // for debugging
+
+    if (htim->Instance == TIM16 && operation_mode == DISTANCE_TRIGGERED)
+    {
+      // fires every 60ms in distance triggering mode
+    	HAL_TIM_BASE_START_IT(&htim2);
+		__HAL_TIM_SET_COUNTER(&htim2,  0);
+		sensor = TRIGGER_HIGH;
+		HAL_GPIO_WritePin(Trigger_GPIO_Port, Trigger_Pin, 1);
+
+    } else if(htim->Instance == TIM2 && sensor == TRIGGER_HIGH && operation_mode == DISTANCE_TRIGGERED){
+      // fire after trigger stays high for 10us
+      sensor = WAITING_FOR_ECHO;
+      HAL_GPIO_WritePin(Trigger_GPIO_Port, Trigger_Pin, 0);
+      HAL_TIM_Base_Stop_IT(&htim2);
+
+
+    } else if (htim->Instance == TIM1)
+    {
+	    HAL_GPIO_TogglePin(Counter_GPIO_Port, Counter_Pin);   // for debugging
     }
+    };
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+    if (GPIO_Pin == GPIO_PIN_7 && operation_mode == DISTANCE_TRIGGERED)  // PB7
+    {
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == GPIO_PIN_SET && sensor == WAITING_FOR_ECHO)
+        {
+            // rising edge
+            echo_rising = __HAL_TIM_GET_COUNTER(&htim16);
+            sensor = ECHO_HIGH;
+        }
+        else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) != GPIO_PIN_SET && sensor == ECHO_HIGH)
+        {
+            // falling edge
+            echo_falling = __HAL_TIM_GET_COUNTER(&htim16);
+            sensor = IDLE;
+        }
+    }
+}
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    if (huart->Instance == USART1)
+    {
+    	if (instruction == STOP_INSTRUCTION  && state == RUNNING){
+    		HAL_TIM_Base_Stop_IT(&htim1);
+    		HAL_UART_Transmit(&huart1, &RECEIVED_CONFIRMATION, 1, HAL_MAX_DELAY);
+			  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
+
+    		HAL_UART_Receive(&huart1, &mode, 1, HAL_MAX_DELAY);
+
+    		if (mode == 17 || mode == 34){
+    			if (mode == 17){
+    				operation_mode = MANUAL_RECORDING;
+    			} else{
+    				operation_mode = DISTANCE_TRIGGERED;
+    			};
+
+    			HAL_UART_Transmit(&huart1, &RECEIVED_CONFIRMATION, 1, HAL_MAX_DELAY);
+    		} else{
+    			// invalid mode received
+
+    		}
+
+    		state = WAIT_FOR_START;
+    		HAL_UART_Receive_IT(&huart1, &instruction, 1); // re-arm for start instruction
+
+    	} else if (instruction == START && state == WAIT_FOR_START){
+    		state = RUNNING;
+    		if (operation_mode = DISTANCE_TRIGGERED){
+			  HAL_TIM_Base_Start_IT(&htim16);
+    		__HAL_TIM_SET_COUNTER(&htim16,  55000);
+    		}
+
+
+    	}
+    }
+}
 
 /* USER CODE END 0 */
 
@@ -121,13 +230,19 @@ int main(void)
   MX_TIM1_Init();
   MX_USART1_UART_Init();
   MX_SPI1_Init();
+  MX_TIM16_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim1);
   __HAL_TIM_SET_COUNTER(&htim1, 0);
   HAL_ADC_Start_IT(&hadc1);
   LL_SPI_Enable(SPI1);
 
+  HAL_UART_Receive_IT(&huart1, &instruction, 1);
+  HAL_GPIO_WritePin(Trigger_GPIO_Port, Trigger_Pin, 0);
+
   //debugging signals
+
   HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 0);
   HAL_GPIO_WritePin(Counter_GPIO_Port, Counter_Pin, 0);
 
@@ -389,6 +504,83 @@ static void MX_TIM1_Init(void)
 }
 
 /**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 31;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 10;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
+  * @brief TIM16 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM16_Init(void)
+{
+
+  /* USER CODE BEGIN TIM16_Init 0 */
+
+  /* USER CODE END TIM16_Init 0 */
+
+  /* USER CODE BEGIN TIM16_Init 1 */
+
+  /* USER CODE END TIM16_Init 1 */
+  htim16.Instance = TIM16;
+  htim16.Init.Prescaler = 31;
+  htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim16.Init.Period = 60000;
+  htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim16.Init.RepetitionCounter = 0;
+  htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM16_Init 2 */
+
+  /* USER CODE END TIM16_Init 2 */
+
+}
+
+/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -495,7 +687,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, Test_Pin|Counter_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LD3_Pin|Trigger_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : Test_Pin Counter_Pin */
   GPIO_InitStruct.Pin = Test_Pin|Counter_Pin;
@@ -504,12 +696,22 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD3_Pin */
-  GPIO_InitStruct.Pin = LD3_Pin;
+  /*Configure GPIO pins : LD3_Pin Trigger_Pin */
+  GPIO_InitStruct.Pin = LD3_Pin|Trigger_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Echo_Pin */
+  GPIO_InitStruct.Pin = Echo_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(Echo_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
