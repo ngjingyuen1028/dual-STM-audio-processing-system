@@ -3,3 +3,4 @@ This is a project which is part of the assessment in the unit ECE 2071
 
 Authors:
 Hugo Watson - 34989498
+Jing Yuen Ng - 35657774
