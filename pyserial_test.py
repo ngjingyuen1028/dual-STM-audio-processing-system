@@ -16,6 +16,10 @@ COMFIRM_BYTE = 0x1B
 CONFIRM_TIMEOUT = 5
 MANUAL_BYTE = 0x11
 STOP_BYTE = 0x40
+APPEND_WINDOW = 1
+END_BYTE = 0xFF
+END_SEQ_LEN = 4
+
 
 
 def record(duration_s):
@@ -45,6 +49,16 @@ def record(duration_s):
     
     return data    
 
+def save_recording(rawdata, choices):
+    duration = len(rawdata) / SAMPLE_RATE
+    print(f"\n Saved recording for {duration:.1f} seconds.")
+
+    if '1' in choices:
+        save_wav(rawdata, duration)
+    if '2' in choices:
+        save_plot(rawdata, duration)
+    if '3' in choices:
+        save_csv(rawdata, duration)
 
 def manual_recording_mode():
 
@@ -55,11 +69,8 @@ def manual_recording_mode():
     print("─" * 60)
  
     # Signal both STM32s to enter Manual Recording Mode and wait for confirmation
-    confirmed = send_manual_and_verify()
-    if not confirmed:
-        print("\n  [✗] Could not confirm STM32s are ready. Returning to main menu.")
-        return
- 
+    send_manual_and_verify()
+
     # Get duration from user
     while True:
         try:
@@ -99,6 +110,60 @@ def distance_trigger_mode():
     print(f"  Listening for ultrasonic trigger on {PORT}.")
     print(f"  Press Ctrl+C to stop and return to the main menu.")
     print("─" * 60)   
+
+    send_trigger_and_verify()
+
+    choices = prompt_output_format()
+
+    if '0' in choices or not choices:
+        print("\n  Recording discarded. Returning to main menu.")
+        return
+    
+    ser = serial.Serial(PORT, BAUD_RATE, timeout=None)
+
+    cur = [] #accumulate samples for the current file
+
+    end_byte_count = 0 #end byte tracker
+
+    recording_active = False
+
+    time.sleep(1)
+
+    print("\n Waiting for trigger...")
+
+    try:
+        while True:
+            byte = ser.read(1)
+            value = byte[0]
+
+            #Checking for the last 4 garbage bytes
+            if value == END_BYTE:
+                end_byte_count += 1
+                if end_byte_count == END_SEQ_LEN:
+                    print(f" End Signal Received")
+                    if cur:
+                        save_recording(cur, choices)
+                    cur = []
+                    end_byte_count = 0
+                    print("\n When tf is the next trigger?")
+
+            else:
+                if end_byte_count > 0:
+                    cur.extend([END_BYTE] * end_byte_count)
+                    end_byte_count = 0
+                
+                if not cur:
+                    print(f"SOMETHING IS THERE, RECORDING NOWWWW!")
+
+                cur.append(value)
+
+    except KeyboardInterrupt:
+        print("\n  Keyboard Interrupted, saving and exiting.")
+        if cur:
+            save_recording(cur, choices)
+        ser.close()
+        return
+
 
 
 def main_menu():

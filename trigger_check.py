@@ -22,10 +22,10 @@ def send_trigger_and_verify():
  
     time.sleep(1)   # Let the STM32 settle after connection opens
  
-    # Step 2: Send MANUAL RECORDING byte
+    # Step 2: Send TRIGGER RECORDING byte
     print(f"  Sending DISTNACE TRIGGER RECORDING command to Processing STM32...")
     ser.write(bytes([TRIGGER_BYTE]))
-    received = ser.read(1)   # Blocks until 1 byte arrives or timeout expires
+    received = ser.read(1)  
  
     if len(received) == 0:
         # No byte received within the timeout window
