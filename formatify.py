@@ -3,6 +3,7 @@ from datetime import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import os
 
 
 
@@ -57,14 +58,19 @@ def save_plot(data, duration_s):
 def save_csv(data, duration_s):
     filename = get_output_filename(duration_s, 'csv')
 
-    df = pd.DataFrame(data, colums=['sample_value'])
-    df.to_csv(filename, index=False)
+    header_df = pd.DataFrame([SAMPLE_RATE], columns=['samples'])
+    samples_df = pd.DataFrame(data, columns=['samples'])
+    whole_df = pd.concat([header_df, samples_df], ignore_index=True)
+
+    whole_df.to_csv(filename, index=False)
 
     with open(filename, 'r') as f:
         og = f.read()
     with open(filename, 'w') as f:
         f.write(f'Sample Rate: {SAMPLE_RATE} Hz\n' + og)
-    print(f"  [✓] CSV file saved: {filename}")
+    print(f"  [✓] CSV file saved: {filename}\n")
+    print("Saved csv file to:", os.path.abspath(filename))
+    print('\n')
 
 def prompt_output_format():
     print("\n  What format would you like to save?")

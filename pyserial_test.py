@@ -12,9 +12,10 @@ BAUD_RATE   = 115200        # Must match the STM32's UART baud rate
 SAMPLE_RATE = 10000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
 OUTPUT_FILE = 'audio/task2.wav' # Change to WHEREVER YOU WANT
 TEAM_ID = 'J08'
-COMFIRM_BYTE = 0x1B
+COMFIRM_BYTE = 0x1B 
 CONFIRM_TIMEOUT = 5
 MANUAL_BYTE = 0x11
+START_BYTE = 0x04
 STOP_BYTE = 0x40
 APPEND_WINDOW = 1
 END_BYTE = 0xFF
@@ -84,9 +85,14 @@ def manual_recording_mode():
             print("  Invalid input. Please enter a number (e.g. 5 or 2.5).")
  
     # Record and save
-    data = record(int(duration_s))
-    
+
     choices = prompt_output_format()
+
+    ser_temp = serial.Serial(PORT, BAUD_RATE)
+    ser_temp.write(bytes([START_BYTE]))
+    ser_temp.close()
+
+    data = record(int(duration_s))
  
     if '0' in choices or not choices:
         print("\n  Recording discarded. Returning to main menu.")
@@ -165,7 +171,7 @@ def distance_trigger_mode():
 
 
 def main_menu():
-    """Display the main menu and route to the selected mode."""
+    #Display the main menu and route to the selected mode.
     send_stop_and_verify()
 
     while True:
