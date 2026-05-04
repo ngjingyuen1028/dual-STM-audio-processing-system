@@ -83,6 +83,7 @@ def manual_recording_mode():
             break
         except ValueError:
             print("  Invalid input. Please enter a number (e.g. 5 or 2.5).")
+            break 
  
     # Record and save
 
@@ -97,14 +98,20 @@ def manual_recording_mode():
     if '0' in choices or not choices:
         print("\n  Recording discarded. Returning to main menu.")
         return
- 
-    if '1' in choices:
-        save_wav(data, int(duration_s))
-    if '2' in choices:
-        save_plot(data, int(duration_s))
-    if '3' in choices:
-        save_csv(data, int(duration_s))
- 
+    
+    while True:
+        try:
+            if '1' in choices:
+                save_wav(data, int(duration_s))
+            if '2' in choices:
+                save_plot(data, int(duration_s))
+            if '3' in choices:
+                save_csv(data, int(duration_s))
+            break 
+        except KeyboardInterrupt:
+                print("  Premature interruption. Halting recording processes")
+                break
+
     print("\n  Returning to main menu.")
 
 
@@ -172,27 +179,49 @@ def distance_trigger_mode():
 
 def main_menu():
     #Display the main menu and route to the selected mode.
-    send_stop_and_verify()
+    # send_stop_and_verify()
 
-    while True:
+    end = True
+
+    while end == True:
         print("\n  MAIN MENU")
         print("  ─────────────────────────────")
         print("  [1] Manual Recording Mode")
         print("  [2] Distance Triggering Mode")
         print("  [0] Exit")
         print("  ─────────────────────────────")
- 
-        choice = input("\n  Enter your choice: ").strip()
+        
+        while True:
+            choice = input("\n  Enter your choice: ")
+            
+            if choice == '1' or choice == '2' or choice == '0': 
+                break
+
+            else:
+                print("  Invalid input. Please enter 1, 2 or 0.")  
  
         if choice == '1':
             manual_recording_mode()
+            send_stop_and_verify()
         elif choice == '2':
             distance_trigger_mode()
+            send_stop_and_verify()
         elif choice == '0':
             print("\n  Exiting. Goodbye!\n")
             break
-        else:
-            print("  Invalid input. Please enter 1, 2 or 0.")
+
+        print("  WOULD YOU LIKE TO RECORD AGAIN?: ")
+        print("  ─────────────────────────────")
+        print("  [1] Record again")
+        print("  [0] Exit")
+        print("  ─────────────────────────────")
+
+        if choice == '1':
+            end = 0
+            break
+        elif choice == '0':
+            print("\n  Exiting. Goodbye!\n")
+            break
  
 # ── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == '__main__':

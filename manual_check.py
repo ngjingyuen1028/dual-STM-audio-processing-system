@@ -12,6 +12,7 @@
  
 import serial
 import time
+import sys
  
 # ── Configuration ─────────────────────────────────────────────────────────────
 PORT             = 'COM3'    # Change to your Processing STM32's COM port
@@ -30,7 +31,7 @@ def send_manual_and_verify():
     except serial.SerialException as e:
         print(f"\n  [✗] Could not open serial port: {e}")
         print("  Check that the STM32 is connected and the PORT is correct.")
-        return False
+        sys.exit()
  
     time.sleep(1)   # Let the STM32 settle after connection opens
  
