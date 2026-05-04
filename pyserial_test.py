@@ -125,8 +125,6 @@ def distance_trigger_mode():
 
     end_byte_count = 0 #end byte tracker
 
-    recording_active = False
-
     time.sleep(1)
 
     print("\n Waiting for trigger...")
@@ -147,7 +145,7 @@ def distance_trigger_mode():
                     end_byte_count = 0
                     print("\n When tf is the next trigger?")
 
-            else:
+            else: #if there are 3 garbage bytes in a row, it is actually NOT garbage
                 if end_byte_count > 0:
                     cur.extend([END_BYTE] * end_byte_count)
                     end_byte_count = 0
