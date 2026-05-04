@@ -28,8 +28,14 @@
 /* USER CODE BEGIN PTD */
 typedef enum {
     RUNNING,
-    WAIT_FOR_START
+    WAIT_FOR_START,
+	OUT_OF_DISTANCE
 } SystemState;
+
+typedef enum{
+	MANUAL_RECORDING,
+	DISTANCE_TRIGGERED
+} Mode;
 
 /* USER CODE END PTD */
 
@@ -55,9 +61,10 @@ DMA_HandleTypeDef hdma_usart2_tx;
 const uint8_t ZERO  = 0;
 const uint8_t STOP_INSTRUCTION = 64;
 const uint8_t RECEIVED_CONFIRMATION = 27;
-const uint8_t START = 255;
+const uint8_t START = 4;
 
 SystemState state = RUNNING;
+Mode operation_mode = MANUAL_RECORDING;
 uint8_t mode;
 uint8_t instruction;
 uint8_t received_confirmation;
@@ -83,6 +90,44 @@ static void MX_SPI1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 const uint8_t window_size = 12;
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	// to handle the rising edge and failling edge of the Echo
+    if (GPIO_Pin == GPIO_PIN_6 && operation_mode == DISTANCE_TRIGGERED)  // PB7
+    {
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET && state == RUNNING)
+        {
+            // rising edge, the object is out of range
+    		HAL_DMA_Abort_IT(&hdma_spi1_rx);
+    		HAL_DMA_Abort_IT(&hdma_usart2_tx);
+    		while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
+    		huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
+
+    		// send out 4 bytes of 0xFF to signal that we are stopping
+    		uint8_t stop_val = 255;
+    		for (int i = 0; i < 4; i++){
+    			HAL_UART_Transmit(&huart2, &stop_val, 1, HAL_MAX_DELAY);
+    		};
+
+    		state = OUT_OF_DISTANCE;
+
+        }
+        else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) != GPIO_PIN_SET && state == OUT_OF_DISTANCE)
+        {
+            // falling edge, means that the object is within range again
+        	// re-arms the spi dma
+    		counter = 0;
+    		average = 0;
+    		initialise = 0;
+    		cumulative_sample = 0;
+    		state = RUNNING;
+    		huart2.gState = HAL_UART_STATE_READY;
+    		hspi1.State = HAL_SPI_STATE_READY;
+    		HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
+        }
+    }
+}
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 //	HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
@@ -123,19 +168,24 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (huart->Instance == USART2)
     {
-    	if (instruction == STOP_INSTRUCTION && state == RUNNING){
+    	if (instruction == STOP_INSTRUCTION){
     		HAL_DMA_Abort_IT(&hdma_spi1_rx);
     		HAL_DMA_Abort_IT(&hdma_usart2_tx);
     		while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
     		huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
 			HAL_UART_Transmit(&huart1, &instruction, 1, HAL_MAX_DELAY);    // send stop instruction to sampling stm
 			HAL_UART_Receive(&huart1, &received_confirmation, 1, HAL_MAX_DELAY);   // receive the confirmation from sampling stm
-			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
 
 			if (received_confirmation == RECEIVED_CONFIRMATION){
+				HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
 				HAL_UART_Transmit(&huart2, &RECEIVED_CONFIRMATION, 1, HAL_MAX_DELAY);
 				HAL_UART_Receive(&huart2, &mode, 1, HAL_MAX_DELAY);    // receive mode from Laptop
 				if (mode == 17 || mode == 34){
+					if (mode == 17){
+						operation_mode = MANUAL_RECORDING;
+					} else{
+						operation_mode = DISTANCE_TRIGGERED;
+					}
 					HAL_UART_Transmit(&huart1, &mode, 1, HAL_MAX_DELAY);
 					HAL_UART_Receive(&huart1, &received_confirmation,1 , HAL_MAX_DELAY);   // from sampling stm
 					if (received_confirmation == RECEIVED_CONFIRMATION){
@@ -164,6 +214,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     		state = RUNNING;
     		hspi1.State = HAL_SPI_STATE_READY;
     		HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
+    		HAL_UART_Transmit(&huart1, &START, 1, HAL_MAX_DELAY);
 			HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt so that user can stop the processing process in the stm
     	}
     }
@@ -218,6 +269,7 @@ int main(void)
   while(1)
   {
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
 	  while( state == WAIT_FOR_START){
 		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
@@ -451,6 +503,16 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : Distance_Pin */
+  GPIO_InitStruct.Pin = Distance_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(Distance_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
