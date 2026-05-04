@@ -84,13 +84,13 @@ void Error_Handler(void);
 #define VCP_RX_GPIO_Port GPIOA
 #define LD3_Pin GPIO_PIN_3
 #define LD3_GPIO_Port GPIOB
+#define Echo_Pin GPIO_PIN_4
+#define Echo_GPIO_Port GPIOB
+#define Echo_EXTI_IRQn EXTI4_IRQn
 #define Distance_Pin GPIO_PIN_5
 #define Distance_GPIO_Port GPIOB
 #define Trigger_Pin GPIO_PIN_6
 #define Trigger_GPIO_Port GPIOB
-#define Echo_Pin GPIO_PIN_7
-#define Echo_GPIO_Port GPIOB
-#define Echo_EXTI_IRQn EXTI9_5_IRQn
 
 /* USER CODE BEGIN Private defines */
 

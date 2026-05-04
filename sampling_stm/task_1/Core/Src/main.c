@@ -109,17 +109,18 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
-	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 1);  // for debugging
+//	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 1);  // for debugging
 	uint8_t data = HAL_ADC_GetValue(&hadc1);
 	SPI1_WriteByte(data);
-	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 0);   // for debugging
+//	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 0);   // for debugging
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
-    if (htim->Instance == TIM16 && operation_mode == DISTANCE_TRIGGERED && sensor == IDLE)
+    if (htim->Instance == TIM16 && operation_mode == DISTANCE_TRIGGERED)  // && sensor = IDLE
     {
       // fires every 60ms in distance triggering mode
+		HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
     	HAL_TIM_Base_Start_IT(&htim2);
 		__HAL_TIM_SET_COUNTER(&htim2,  0);
 		sensor = TRIGGER_HIGH;
@@ -141,15 +142,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	// to handle the rising edge and failling edge of the Echo
-    if (GPIO_Pin == GPIO_PIN_7 && operation_mode == DISTANCE_TRIGGERED)  // PB7
+    if (GPIO_Pin == GPIO_PIN_4 && operation_mode == DISTANCE_TRIGGERED)  // PB7
     {
-        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) == GPIO_PIN_SET && sensor == WAITING_FOR_ECHO)
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) == GPIO_PIN_SET && sensor == WAITING_FOR_ECHO)
         {
             // rising edge
             echo_rising = __HAL_TIM_GET_COUNTER(&htim16);
             sensor = ECHO_HIGH;
         }
-        else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7) != GPIO_PIN_SET && sensor == ECHO_HIGH)
+        else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4) != GPIO_PIN_SET && sensor == ECHO_HIGH)
         {
             // falling edge
             echo_falling = __HAL_TIM_GET_COUNTER(&htim16);
@@ -200,9 +201,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
     		HAL_UART_Receive_IT(&huart1, &instruction, 1); // re-arm for stop instruction
     		if (operation_mode == DISTANCE_TRIGGERED){
-			  HAL_TIM_Base_Start_IT(&htim16);
-    		__HAL_TIM_SET_COUNTER(&htim16,  58000);
-    		state = OUT_OF_DISTANCE; // assume the sensor is out of distance when initialized
+    			HAL_TIM_Base_Start_IT(&htim16);
+    			__HAL_TIM_SET_COUNTER(&htim16,  58000);
+    			state = OUT_OF_DISTANCE; // assume the sensor is out of distance when initialized
 
     		} else{
     			// start sampling if it is not in DISTANCE_Triggered
@@ -281,6 +282,21 @@ int main(void)
 		  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 		  HAL_Delay(500);
 	  }
+
+	  while (state == RUNNING){
+		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, 0);
+	  };
+
+	  while (state == RUNNING && mode == DISTANCE_TRIGGERED){
+		  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+		  HAL_Delay(150);
+	  };
+
+	  while (state == OUT_OF_DISTANCE && mode == DISTANCE_TRIGGERED){
+		  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
+		  HAL_Delay(500);
+	  }
+
   }
   /* USER CODE END 3 */
 }
@@ -736,8 +752,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(Echo_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
-  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+  HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI4_IRQn);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

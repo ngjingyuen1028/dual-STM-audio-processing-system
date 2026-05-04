@@ -178,7 +178,9 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 			if (received_confirmation == RECEIVED_CONFIRMATION){
 				HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
-				HAL_UART_Transmit(&huart2, &RECEIVED_CONFIRMATION, 1, HAL_MAX_DELAY);
+//	    		while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
+//	    		huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
+				HAL_UART_Transmit(&huart2, &received_confirmation, 1, HAL_MAX_DELAY);
 				HAL_UART_Receive(&huart2, &mode, 1, HAL_MAX_DELAY);    // receive mode from Laptop
 				if (mode == 17 || mode == 34){
 					if (mode == 17){
@@ -274,6 +276,11 @@ int main(void)
 	  while( state == WAIT_FOR_START){
 		HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
 		HAL_Delay(500);
+	  }
+
+	  while(state == RUNNING){
+		HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,0);
+
 	  }
   }
   /* USER CODE END 3 */
