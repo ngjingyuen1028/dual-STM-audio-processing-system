@@ -109,10 +109,9 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
-//	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 1);  // for debugging
+	HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);  // for debugging
 	uint16_t data = HAL_ADC_GetValue(&hadc1);
 	SPI1_WriteByte(data);
-//	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 0);   // for debugging
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
@@ -515,9 +514,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 31;
+  htim1.Init.Prescaler = 5;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 99;
+  htim1.Init.Period = 120;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;

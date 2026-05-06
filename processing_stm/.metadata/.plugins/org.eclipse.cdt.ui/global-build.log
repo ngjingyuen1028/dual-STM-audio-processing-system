@@ -2043,3 +2043,387 @@ arm-none-eabi-size  task_1.elf
   22524	     12	   2364	  24900	   6144	task_1.elf
 Finished building: default.size.stdout
  
+13:02:07 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_GPIO_EXTI_Callback':
+../Core/Src/main.c:132:52: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  132 |             HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:430,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:167:48: warning: passing argument 2 of 'HAL_UART_Transmit_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  167 |                 HAL_UART_Transmit_DMA(&huart2, &average, 2);
+      |                                                ^~~~~~~~
+      |                                                |
+      |                                                uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:450:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:1698:83: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+ 1698 | HAL_StatusTypeDef HAL_UART_Transmit_DMA(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size);
+      |                                                                    ~~~~~~~~~~~~~~~^~~~~
+../Core/Src/main.c:175:48: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  175 |         HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                |
+      |                                                uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:232:52: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  232 |             HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:278:42: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  278 |   HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                               ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                          |
+      |                                          uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\project\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+Finished building: task_1.list
+ 
+   text	   data	    bss	    dec	    hex	filename
+  22520	     12	   2620	  25152	   6240	task_1.elf
+Finished building: default.size.stdout
+ 
+13:02:12 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22520	     12	   2620	  25152	   6240	task_1.elf
+Finished building: default.size.stdout
+ 
+13:02:30 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22520	     12	   2620	  25152	   6240	task_1.elf
+Finished building: default.size.stdout
+ 
+13:02:35 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22520	     12	   2620	  25152	   6240	task_1.elf
+Finished building: default.size.stdout
+ 
+14:04:12 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_GPIO_EXTI_Callback':
+../Core/Src/main.c:132:52: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  132 |             HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:430,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:167:48: warning: passing argument 2 of 'HAL_UART_Transmit_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  167 |                 HAL_UART_Transmit_DMA(&huart2, &average, 2);
+      |                                                ^~~~~~~~
+      |                                                |
+      |                                                uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:450:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:1698:83: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+ 1698 | HAL_StatusTypeDef HAL_UART_Transmit_DMA(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size);
+      |                                                                    ~~~~~~~~~~~~~~~^~~~~
+../Core/Src/main.c:175:48: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  175 |         HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                |
+      |                                                uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:232:52: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  232 |             HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:278:42: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  278 |   HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                               ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                          |
+      |                                          uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\project\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+Finished building: task_1.list
+ 
+   text	   data	    bss	    dec	    hex	filename
+  22520	     12	   2620	  25152	   6240	task_1.elf
+Finished building: default.size.stdout
+ 
+14:04:29 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22520	     12	   2620	  25152	   6240	task_1.elf
+Finished building: default.size.stdout
+ 
+14:04:34 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22520	     12	   2620	  25152	   6240	task_1.elf
+Finished building: default.size.stdout
+ 
+14:21:20 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_GPIO_EXTI_Callback':
+../Core/Src/main.c:132:52: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  132 |             HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:430,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:167:48: warning: passing argument 2 of 'HAL_UART_Transmit_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  167 |                 HAL_UART_Transmit_DMA(&huart2, &average, 2);
+      |                                                ^~~~~~~~
+      |                                                |
+      |                                                uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:450:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:1698:83: note: expected 'const uint8_t *' {aka 'const unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+ 1698 | HAL_StatusTypeDef HAL_UART_Transmit_DMA(UART_HandleTypeDef *huart, const uint8_t *pData, uint16_t Size);
+      |                                                                    ~~~~~~~~~~~~~~~^~~~~
+../Core/Src/main.c:175:48: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  175 |         HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                |
+      |                                                uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:240:52: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  240 |             HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                                         ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                                    |
+      |                                                    uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:286:42: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  286 |   HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+      |                               ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+      |                                          |
+      |                                          uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\project\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+Finished building: task_1.list
+ 
+   text	   data	    bss	    dec	    hex	filename
+  22532	     12	   2620	  25164	   624c	task_1.elf
+Finished building: default.size.stdout
+ 
+14:21:28 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22532	     12	   2620	  25164	   624c	task_1.elf
+Finished building: default.size.stdout
+ 
+14:22:52 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22532	     12	   2620	  25164	   624c	task_1.elf
+Finished building: default.size.stdout
+ 
+14:23:04 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22532	     12	   2620	  25164	   624c	task_1.elf
+Finished building: default.size.stdout
+ 
+15:37:12 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'Process_Audio_Chunk':
+../Core/Src/main.c:111:17: error: 'running' undeclared (first use in this function)
+  111 |                 running += window[window_idx];
+      |                 ^~~~~~~
+../Core/Src/main.c:111:17: note: each undeclared identifier is reported only once for each function it appears in
+../Core/Src/main.c: In function 'HAL_GPIO_EXTI_Callback':
+../Core/Src/main.c:167:41: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  167 |             HAL_SPI_Receive_DMA(&hspi1, rxBuffer, CHUNK_SIZE * 2);
+      |                                         ^~~~~~~~
+      |                                         |
+      |                                         uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:430,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_SPI_RxHalfCpltCallback':
+../Core/Src/main.c:219:58: error: 'uart_tx_buffer' undeclared (first use in this function)
+  219 |                 HAL_UART_Transmit_DMA(&huart2, (uint8_t*)uart_tx_buffer, CHUNK_SIZE*2);
+      |                                                          ^~~~~~~~~~~~~~
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:228:58: error: 'uart_tx_buffer' undeclared (first use in this function)
+  228 |                 HAL_UART_Transmit_DMA(&huart2, (uint8_t*)uart_tx_buffer, CHUNK_SIZE*2);
+      |                                                          ^~~~~~~~~~~~~~
+../Core/Src/main.c:231:45: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  231 |                 HAL_SPI_Receive_DMA(&hspi1, rxBuffer, CHUNK_SIZE * 2);   // re arm the SPI DMA
+      |                                             ^~~~~~~~
+      |                                             |
+      |                                             uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:305:41: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  305 |             HAL_SPI_Receive_DMA(&hspi1, rxBuffer, CHUNK_SIZE*2);
+      |                                         ^~~~~~~~
+      |                                         |
+      |                                         uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:351:31: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  351 |   HAL_SPI_Receive_DMA(&hspi1, rxBuffer, CHUNK_SIZE*2);
+      |                               ^~~~~~~~
+      |                               |
+      |                               uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+15:39:09 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_GPIO_EXTI_Callback':
+../Core/Src/main.c:167:41: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  167 |             HAL_SPI_Receive_DMA(&hspi1, &rxBuffer[0], CHUNK_SIZE * 2);
+      |                                         ^~~~~~~~~~~~
+      |                                         |
+      |                                         uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:430,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:231:45: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  231 |                 HAL_SPI_Receive_DMA(&hspi1, &rxBuffer[0], CHUNK_SIZE * 2);   // re arm the SPI DMA
+      |                                             ^~~~~~~~~~~~
+      |                                             |
+      |                                             uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:305:41: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  305 |             HAL_SPI_Receive_DMA(&hspi1, rxBuffer, CHUNK_SIZE*2);
+      |                                         ^~~~~~~~
+      |                                         |
+      |                                         uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:351:31: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  351 |   HAL_SPI_Receive_DMA(&hspi1, rxBuffer, CHUNK_SIZE*2);
+      |                               ^~~~~~~~
+      |                               |
+      |                               uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\project\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+Finished building: task_1.list
+ 
+   text	   data	    bss	    dec	    hex	filename
+  22596	     12	   3668	  26276	   66a4	task_1.elf
+Finished building: default.size.stdout
+ 
+15:40:54 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\project\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+Finished building: task_1.list
+ 
+   text	   data	    bss	    dec	    hex	filename
+  22596	     12	   3668	  26276	   66a4	task_1.elf
+Finished building: default.size.stdout
+ 
+15:44:06 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\project\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+Finished building: task_1.list
+ 
+   text	   data	    bss	    dec	    hex	filename
+  22596	     12	   4180	  26788	   68a4	task_1.elf
+Finished building: default.size.stdout
+ 

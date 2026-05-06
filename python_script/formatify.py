@@ -8,8 +8,8 @@ import os
 
 
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
-BAUD_RATE   = 115200        # Must match the STM32's UART baud rate
-SAMPLE_RATE = 5000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
+BAUD_RATE   = 921600        # Must match the STM32's UART baud rate
+SAMPLE_RATE = 44100          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
 OUTPUT_FILE_WAV_DIR = 'outputs/audio/' # Change to WHEREVER YOU WANT
 OUTPUT_FILE_CSV_DIR = 'outputs/csv_files/' # Change to WHEREVER YOU WANT
 OUTPUT_FILE_PNG_DIR = 'outputs/png_files/' # Change to WHEREVER YOU WANT
@@ -29,7 +29,7 @@ def save_wav(data, duration_s):
     filename = OUTPUT_FILE_WAV_DIR + get_output_filename(duration_s) + "wav"
     with wave.open(filename, 'wb') as wf:
         wf.setnchannels(1)           # Mono
-        wf.setsampwidth(1)           # 8-bit samples = 1 byte per sample
+        wf.setsampwidth(2)           # 8-bit samples = 1 byte per sample
         wf.setframerate(SAMPLE_RATE) # Sample rate in Hz
         wf.writeframes(data.tobytes())
     
@@ -51,7 +51,7 @@ def save_plot(data, duration_s):
     plt.xlabel('Time (s)', fontsize=11)
     plt.ylabel('Amplitude (0–255)', fontsize=11)
     plt.xlim([0, time_axis[-1]])
-    plt.ylim([0, 255])
+    plt.ylim([-32768, 32767])
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.savefig(filename, dpi=150)

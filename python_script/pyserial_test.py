@@ -8,8 +8,8 @@ from formatify import save_csv, save_plot, save_wav, prompt_output_format
 
 # Config
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
-BAUD_RATE   = 115200        # Must match the STM32's UART baud rate
-SAMPLE_RATE = 5000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
+BAUD_RATE   = 921600        # Must match the STM32's UART baud rate
+SAMPLE_RATE = 44100          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
 OUTPUT_FILE = 'audio/task2.wav' # Change to WHEREVER YOU WANT
 TEAM_ID = 'J08'
 COMFIRM_BYTE = 0x1B 
@@ -25,38 +25,50 @@ END_SEQ_LEN = 4
 
 def record(duration_s):
     total_samples = SAMPLE_RATE * duration_s  # Total number of bytes to read
+    total_bytes = total_samples*2
     
     print(f"Recording {duration_s}s of audio at {SAMPLE_RATE} sps ({total_samples} samples)...") #some random shi to make sure code is running
     print(f"Opening serial port {PORT} at {BAUD_RATE} baud...") #same here
     
     ser = serial.Serial(PORT, BAUD_RATE)
     time.sleep(0.2)  # Allow STM32 to settle after serial connection opens
+
+    raw_bytes = ser.read(total_bytes)
+
+    ser.close()
+    print("Recording done closed serial port")
     
     data = []
     
-    while len(data) < total_samples:
-        byte = ser.read(1)          # Blocks until 1 byte is received (up to timeout)
-        if len(byte) == 0:
-            print("Warning: timeout waiting for data. Is the STM32 sending?")
-            continue
-        data.append(float(byte[0]))        # byte[0] is the uint8 sample value (0–255)
+    # while len(data) < total_samples:
+    #     byte = ser.read(2)          # Blocks until 1 byte is received (up to timeout)
+    #     if len(byte) < 2:
+    #         print("Warning: timeout waiting for data. Is the STM32 sending?")
+    #         continue
+    #     val = int.from_bytes(byte, byteorder='little')
+    #     data.append(float(val))        # byte[0] is the uint8 sample value (0–255)
     
-    ser.close()
-    print("Recording done. Serial port closed.")
+    # ser.close()
+    # print("Recording done. Serial port closed.")
     
     #Convert to numpy array
-    data = np.array(data)
-    data = (data - data.min())/(data.max() - data.min())
-    data *= 255          # use full 8-bit range, not 160
-    data = np.round(data).astype(np.uint8)  # round instead of truncate
+    # data = np.array(data)
+    # data = (data - data.min()) / (data.max() - data.min())  # 0.0 to 1.0
+    # data = np.round(data * 65535 - 32768).astype(np.int16)          # -32768 to 32767
+
+    if len(raw_bytes) < total_bytes:
+        print(f"Warning only received {len(raw_bytes)} / {total_bytes}")
     
+    data = np.frombuffer(raw_bytes, dtype='<i2').astype(np.float64)
+    data = (data - data.min()) / (data.max() - data.min())  # 0.0 to 1.0
+    data = np.round(data * 65535 - 32768).astype(np.int16)          # -32768 to 32767
+
     return data    
 
 def save_recording(rawdata, choices):
     data = np.array(rawdata)
-    data = (data - data.min())/data.max()
-    data *= 255          # use full 8-bit range, not 160
-    data = np.round(data).astype(np.uint8)  # round instead of truncate
+    data = (data - data.min()) / (data.max() - data.min())  # 0.0 to 1.0
+    data = np.round(data * 65535 - 32768).astype(np.int16)          # -32768 to 32767
     duration = len(data) / SAMPLE_RATE
     print(f"\n Saved recording for {duration:.1f} seconds.")
     if '1' in choices:
@@ -152,12 +164,15 @@ def distance_trigger_mode():
     try:
         while True:
 
-            byte = ser.read(1)
+            byte = ser.read(2)
+
             if not byte:
+                continue
+            elif (len(byte) < 2):
                 continue
 
             print("Registered a byte")
-            value = byte[0]
+            value = int.from_bytes(byte, byteorder='little')
 
             #Checking for the last 4 garbage bytes
             if value == END_BYTE:
@@ -178,7 +193,7 @@ def distance_trigger_mode():
                 if not cur:
                     print(f"SOMETHING IS THERE, RECORDING NOWWWW!")
 
-                cur.append(value)
+                cur.append(float(value))
 
     except KeyboardInterrupt:
         print("\n  Keyboard Interrupted, saving and exiting.")
