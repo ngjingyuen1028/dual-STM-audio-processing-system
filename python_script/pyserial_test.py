@@ -9,7 +9,7 @@ from formatify import save_csv, save_plot, save_wav, prompt_output_format
 # Config
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
 BAUD_RATE   = 115200        # Must match the STM32's UART baud rate
-SAMPLE_RATE = 10000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
+SAMPLE_RATE = 5000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
 OUTPUT_FILE = 'audio/task2.wav' # Change to WHEREVER YOU WANT
 TEAM_ID = 'J08'
 COMFIRM_BYTE = 0x1B 
@@ -39,22 +39,24 @@ def record(duration_s):
         if len(byte) == 0:
             print("Warning: timeout waiting for data. Is the STM32 sending?")
             continue
-        data.append(byte[0])        # byte[0] is the uint8 sample value (0–255)
+        data.append(float(byte[0]))        # byte[0] is the uint8 sample value (0–255)
     
     ser.close()
-    print("Receiving. Serial port closed.")
+    print("Recording done. Serial port closed.")
     
     #Convert to numpy array
     data = np.array(data)
-    data = data.astype(np.uint8)# convert to uint8
+    data = (data - data.min())/(data.max() - data.min())
+    data *= 255          # use full 8-bit range, not 160
+    data = np.round(data).astype(np.uint8)  # round instead of truncate
     
     return data    
 
 def save_recording(rawdata, choices):
     data = np.array(rawdata)
     data = (data - data.min())/data.max()
-    data *= 255
-    data = data.astype(np.uint8)
+    data *= 255          # use full 8-bit range, not 160
+    data = np.round(data).astype(np.uint8)  # round instead of truncate
     duration = len(data) / SAMPLE_RATE
     print(f"\n Saved recording for {duration:.1f} seconds.")
     if '1' in choices:

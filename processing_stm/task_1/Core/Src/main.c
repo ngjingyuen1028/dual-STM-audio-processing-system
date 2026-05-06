@@ -62,6 +62,7 @@ const uint8_t ZERO  = 0;
 const uint8_t STOP_INSTRUCTION = 64;
 const uint8_t RECEIVED_CONFIRMATION = 27;
 const uint8_t START = 4;
+const uint8_t window_size = 16;
 
 SystemState state = RUNNING;
 Mode operation_mode = MANUAL_RECORDING;
@@ -73,6 +74,9 @@ uint8_t average;
 uint8_t counter = 0;
 uint8_t initialise = 0;
 uint16_t cumulative_sample;
+uint8_t downsample[2] = {0,0};
+uint8_t downsample_position = 0;
+uint16_t downsample_average;
 
 /* USER CODE END PV */
 
@@ -89,136 +93,145 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-const uint8_t window_size = 12;
+
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-	// to handle the rising edge and failling edge of the Echo
+    // to handle the rising edge and failling edge of the Echo
     if (GPIO_Pin == GPIO_PIN_6 && operation_mode == DISTANCE_TRIGGERED)  // PB7
     {
         if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) == GPIO_PIN_SET && state == RUNNING)
         {
             // rising edge, the object is out of range
-    		HAL_DMA_Abort_IT(&hdma_spi1_rx);
-    		HAL_DMA_Abort_IT(&hdma_usart2_tx);
-    		while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
-    		huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
+            HAL_DMA_Abort_IT(&hdma_spi1_rx);
+            HAL_DMA_Abort_IT(&hdma_usart2_tx);
+            while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
+            huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
 
-    		// send out 4 bytes of 0xFF to signal that we are stopping
-    		uint8_t stop_val = 255;
-    		for (int i = 0; i < 4; i++){
-    			HAL_UART_Transmit(&huart2, &stop_val, 1, HAL_MAX_DELAY);
-    		};
+            // send out 4 bytes of 0xFF to signal that we are stopping
+            uint8_t stop_val = 255;
+            for (int i = 0; i < 4; i++){
+                HAL_UART_Transmit(&huart2, &stop_val, 1, HAL_MAX_DELAY);
+            };
 
-    		state = OUT_OF_DISTANCE;
+            state = OUT_OF_DISTANCE;
 
         }
         else if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6) != GPIO_PIN_SET && state == OUT_OF_DISTANCE)
         {
             // falling edge, means that the object is within range again
-        	// re-arms the spi dma
-    		counter = 0;
-    		average = 0;
-    		initialise = 0;
-    		cumulative_sample = 0;
-    		state = RUNNING;
-    		huart2.gState = HAL_UART_STATE_READY;
-    		hspi1.State = HAL_SPI_STATE_READY;
-    		HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
+            // re-arms the spi dma
+            downsample_position = 0;
+            counter = 0;
+            average = 0;
+            initialise = 0;
+            cumulative_sample = 0;
+            state = RUNNING;
+            huart2.gState = HAL_UART_STATE_READY;
+            hspi1.State = HAL_SPI_STATE_READY;
+            HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
         }
     }
 }
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
-//	HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
+//  HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
 //  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
 
-	if (hspi->Instance == SPI1) {
+    if (hspi->Instance == SPI1) {
+        downsample_position ^= 1;
 
-		counter++;
-		if (counter == window_size){ // loops the counter around for each index in the window size
-			counter = 0;
-//				HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
+        if (downsample_position == 0){
+            downsample_average = (downsample[0]+downsample[1]) >> 1;
 
-		}
-		if (initialise >= window_size-1) // doesn't send first few datapoints until average can be computed
-		{
-			HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
-			cumulative_sample = 0; // calculates average
-			for (uint8_t i = 0; i < window_size; i++)
-			{
-				cumulative_sample += rxBuffer[i];
-			}
+            rxBuffer[counter] = (uint8_t)downsample_average;
 
-			average = (uint8_t)cumulative_sample/window_size;
+            counter++;
+            if (counter == window_size){ // loops the counter around for each index in the window size
+                counter = 0;
+    //              HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
 
-			HAL_UART_Transmit_DMA(&huart2, &average, 1);
-			 HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,0);
+            }
+            if (initialise >= window_size-1) // doesn't send first few datapoints until average can be computed
+            {
+                HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
+                cumulative_sample = 0; // calculates average
+                for (uint8_t i = 0; i < window_size; i++)
+                {
+                    cumulative_sample += rxBuffer[i];
+                }
 
-		} else {
-			initialise ++;
-		}
+                average = (uint8_t)cumulative_sample/window_size;
 
-		HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
+                HAL_UART_Transmit_DMA(&huart2, &average, 1);
+                HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,0);
 
-	}
+            } else {
+                initialise ++;
+            }
+        }
+
+        HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+
+    }
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (huart->Instance == USART2)
     {
-    	if (instruction == STOP_INSTRUCTION){
-    		HAL_DMA_Abort_IT(&hdma_spi1_rx);
-    		HAL_DMA_Abort_IT(&hdma_usart2_tx);
-    		while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
-    		huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
-			HAL_UART_Transmit(&huart1, &instruction, 1, HAL_MAX_DELAY);    // send stop instruction to sampling stm
-			HAL_UART_Receive(&huart1, &received_confirmation, 1, HAL_MAX_DELAY);   // receive the confirmation from sampling stm
+        if (instruction == STOP_INSTRUCTION){
+            HAL_DMA_Abort_IT(&hdma_spi1_rx);
+            HAL_DMA_Abort_IT(&hdma_usart2_tx);
+            while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
+            huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
+            HAL_UART_Transmit(&huart1, &instruction, 1, HAL_MAX_DELAY);    // send stop instruction to sampling stm
+            HAL_UART_Receive(&huart1, &received_confirmation, 1, HAL_MAX_DELAY);   // receive the confirmation from sampling stm
 
-			if (received_confirmation == RECEIVED_CONFIRMATION){
-				HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
-//	    		while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
-//	    		huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
-				HAL_UART_Transmit(&huart2, &received_confirmation, 1, HAL_MAX_DELAY);
-				HAL_UART_Receive(&huart2, &mode, 1, HAL_MAX_DELAY);    // receive mode from Laptop
-				if (mode == 17 || mode == 34){
-					if (mode == 17){
-						operation_mode = MANUAL_RECORDING;
-					} else{
-						operation_mode = DISTANCE_TRIGGERED;
-					}
-					HAL_UART_Transmit(&huart1, &mode, 1, HAL_MAX_DELAY);
-					HAL_UART_Receive(&huart1, &received_confirmation,1 , HAL_MAX_DELAY);   // from sampling stm
-					if (received_confirmation == RECEIVED_CONFIRMATION){
-						HAL_UART_Transmit(&huart2, &RECEIVED_CONFIRMATION, 1, HAL_MAX_DELAY);
-					} else{
-						// sampling stm didn't receive the mode properly
-					}
-				} else{
-					// incorrect mode values
-				}
-			} else{
-				// sampling stm didn't receive the stop instruction correctly
-			};
+            if (received_confirmation == RECEIVED_CONFIRMATION){
+                HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,1);
+//              while (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) == RESET);   // make sure all DMA transmission is done before continuing
+//              huart2.gState = HAL_UART_STATE_READY;  // force HAL state back to ready
+                HAL_UART_Transmit(&huart2, &received_confirmation, 1, HAL_MAX_DELAY);
+                HAL_UART_Receive(&huart2, &mode, 1, HAL_MAX_DELAY);    // receive mode from Laptop
+                if (mode == 17 || mode == 34){
+                    if (mode == 17){
+                        operation_mode = MANUAL_RECORDING;
+                    } else{
+                        operation_mode = DISTANCE_TRIGGERED;
+                    }
+                    HAL_UART_Transmit(&huart1, &mode, 1, HAL_MAX_DELAY);
+                    HAL_UART_Receive(&huart1, &received_confirmation,1 , HAL_MAX_DELAY);   // from sampling stm
+                    if (received_confirmation == RECEIVED_CONFIRMATION){
+                        HAL_UART_Transmit(&huart2, &RECEIVED_CONFIRMATION, 1, HAL_MAX_DELAY);
+                    } else{
+                        // sampling stm didn't receive the mode properly
+                    }
+                } else{
+                    // incorrect mode values
+                }
+            } else{
+                // sampling stm didn't receive the stop instruction correctly
+            };
 
-			// will be at this line when processing & sampling stm is configured
-			// now waiting for laptop to start the sampling
-			state = WAIT_FOR_START;
-			HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt to wait for user start input
+            // will be at this line when processing & sampling stm is configured
+            // now waiting for laptop to start the sampling
+            state = WAIT_FOR_START;
+            HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt to wait for user start input
 
-    	}else if (instruction ==  START && state ==  WAIT_FOR_START){
-    		// reset all the needed parameter before opening the SPI DMA channel
-    		counter = 0;
-    		average = 0;
-    		initialise = 0;
-    		cumulative_sample = 0;
-    		state = RUNNING;
-    		hspi1.State = HAL_SPI_STATE_READY;
-    		HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
-    		HAL_UART_Transmit(&huart1, &START, 1, HAL_MAX_DELAY);
-			HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt so that user can stop the processing process in the stm
-    	}
+        }else if (instruction ==  START && state ==  WAIT_FOR_START){
+            // reset all the needed parameter before opening the SPI DMA channel
+            downsample_position = 0;
+            counter = 0;
+            average = 0;
+            initialise = 0;
+            cumulative_sample = 0;
+            state = RUNNING;
+            hspi1.State = HAL_SPI_STATE_READY;
+            HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
+            HAL_UART_Transmit(&huart1, &START, 1, HAL_MAX_DELAY);
+            HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt so that user can stop the processing process in the stm
+        }
     }
 }
 
@@ -261,7 +274,7 @@ int main(void)
 
   __HAL_SPI_ENABLE(&hspi1);  // add this line BEFORE the DMA call
   HAL_UART_Receive_IT(&huart2, &instruction, 1);
-  HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
+  HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
 
 
   /* USER CODE END 2 */

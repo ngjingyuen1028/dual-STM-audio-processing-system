@@ -9,7 +9,7 @@ import os
 
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
 BAUD_RATE   = 115200        # Must match the STM32's UART baud rate
-SAMPLE_RATE = 10000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
+SAMPLE_RATE = 5000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
 OUTPUT_FILE_WAV_DIR = 'outputs/audio/' # Change to WHEREVER YOU WANT
 OUTPUT_FILE_CSV_DIR = 'outputs/csv_files/' # Change to WHEREVER YOU WANT
 OUTPUT_FILE_PNG_DIR = 'outputs/png_files/' # Change to WHEREVER YOU WANT
