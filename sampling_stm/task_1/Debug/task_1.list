@@ -39,13 +39,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_line   00017279  00000000  00000000  00049d36  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000e2302  00000000  00000000  00060faf  2**0
+ 18 .debug_str    000e2303  00000000  00000000  00060faf  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  001432b1  2**0
+ 19 .comment      00000043  00000000  00000000  001432b2  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00005c98  00000000  00000000  001432f4  2**2
+ 20 .debug_frame  00005c98  00000000  00000000  001432f8  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000082  00000000  00000000  00148f8c  2**0
+ 21 .debug_line_str 00000082  00000000  00000000  00148f90  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1716,30 +1716,30 @@ __STATIC_INLINE void LL_SPI_ClearFlag_OVR(const SPI_TypeDef *SPIx)
  8001038:	f85d 7b04 	ldr.w	r7, [sp], #4
  800103c:	4770      	bx	lr
 
-0800103e <LL_SPI_TransmitData8>:
+0800103e <LL_SPI_TransmitData16>:
   * @param  SPIx SPI Instance
-  * @param  TxData Value between Min_Data=0x00 and Max_Data=0xFF
+  * @param  TxData Value between Min_Data=0x00 and Max_Data=0xFFFF
   * @retval None
   */
-__STATIC_INLINE void LL_SPI_TransmitData8(SPI_TypeDef *SPIx, uint8_t TxData)
+__STATIC_INLINE void LL_SPI_TransmitData16(SPI_TypeDef *SPIx, uint16_t TxData)
 {
  800103e:	b480      	push	{r7}
  8001040:	b085      	sub	sp, #20
  8001042:	af00      	add	r7, sp, #0
  8001044:	6078      	str	r0, [r7, #4]
  8001046:	460b      	mov	r3, r1
- 8001048:	70fb      	strb	r3, [r7, #3]
+ 8001048:	807b      	strh	r3, [r7, #2]
 #if defined (__GNUC__)
-  __IO uint8_t *spidr = ((__IO uint8_t *)&SPIx->DR);
+  __IO uint16_t *spidr = ((__IO uint16_t *)&SPIx->DR);
  800104a:	687b      	ldr	r3, [r7, #4]
  800104c:	330c      	adds	r3, #12
  800104e:	60fb      	str	r3, [r7, #12]
   *spidr = TxData;
  8001050:	68fb      	ldr	r3, [r7, #12]
- 8001052:	78fa      	ldrb	r2, [r7, #3]
- 8001054:	701a      	strb	r2, [r3, #0]
+ 8001052:	887a      	ldrh	r2, [r7, #2]
+ 8001054:	801a      	strh	r2, [r3, #0]
 #else
-  *((__IO uint8_t *)&SPIx->DR) = TxData;
+  SPIx->DR = TxData;
 #endif /* __GNUC__ */
 }
  8001056:	bf00      	nop
@@ -1840,27 +1840,27 @@ static void SPI1_WriteByte(uint16_t tx_byte){
  80010d6:	4603      	mov	r3, r0
  80010d8:	2b00      	cmp	r3, #0
  80010da:	d0f9      	beq.n	80010d0 <SPI1_WriteByte+0xc>
-	LL_SPI_TransmitData8(SPI1, tx_byte);
+	LL_SPI_TransmitData16(SPI1, tx_byte);
  80010dc:	88fb      	ldrh	r3, [r7, #6]
- 80010de:	b2db      	uxtb	r3, r3
- 80010e0:	4619      	mov	r1, r3
- 80010e2:	4808      	ldr	r0, [pc, #32]	@ (8001104 <SPI1_WriteByte+0x40>)
- 80010e4:	f7ff ffab 	bl	800103e <LL_SPI_TransmitData8>
+ 80010de:	4619      	mov	r1, r3
+ 80010e0:	4808      	ldr	r0, [pc, #32]	@ (8001104 <SPI1_WriteByte+0x40>)
+ 80010e2:	f7ff ffac 	bl	800103e <LL_SPI_TransmitData16>
 	while(LL_SPI_IsActiveFlag_BSY(SPI1)){;}
- 80010e8:	bf00      	nop
- 80010ea:	4806      	ldr	r0, [pc, #24]	@ (8001104 <SPI1_WriteByte+0x40>)
- 80010ec:	f7ff ff82 	bl	8000ff4 <LL_SPI_IsActiveFlag_BSY>
- 80010f0:	4603      	mov	r3, r0
- 80010f2:	2b00      	cmp	r3, #0
- 80010f4:	d1f9      	bne.n	80010ea <SPI1_WriteByte+0x26>
+ 80010e6:	bf00      	nop
+ 80010e8:	4806      	ldr	r0, [pc, #24]	@ (8001104 <SPI1_WriteByte+0x40>)
+ 80010ea:	f7ff ff83 	bl	8000ff4 <LL_SPI_IsActiveFlag_BSY>
+ 80010ee:	4603      	mov	r3, r0
+ 80010f0:	2b00      	cmp	r3, #0
+ 80010f2:	d1f9      	bne.n	80010e8 <SPI1_WriteByte+0x24>
 	LL_SPI_ClearFlag_OVR(SPI1);
- 80010f6:	4803      	ldr	r0, [pc, #12]	@ (8001104 <SPI1_WriteByte+0x40>)
- 80010f8:	f7ff ff8f 	bl	800101a <LL_SPI_ClearFlag_OVR>
+ 80010f4:	4803      	ldr	r0, [pc, #12]	@ (8001104 <SPI1_WriteByte+0x40>)
+ 80010f6:	f7ff ff90 	bl	800101a <LL_SPI_ClearFlag_OVR>
 }
- 80010fc:	bf00      	nop
- 80010fe:	3708      	adds	r7, #8
- 8001100:	46bd      	mov	sp, r7
- 8001102:	bd80      	pop	{r7, pc}
+ 80010fa:	bf00      	nop
+ 80010fc:	3708      	adds	r7, #8
+ 80010fe:	46bd      	mov	sp, r7
+ 8001100:	bd80      	pop	{r7, pc}
+ 8001102:	bf00      	nop
  8001104:	40013000 	.word	0x40013000
 
 08001108 <HAL_ADC_ConvCpltCallback>:
@@ -3022,17 +3022,17 @@ static void MX_TIM1_Init(void)
  8001836:	4b1f      	ldr	r3, [pc, #124]	@ (80018b4 <MX_TIM1_Init+0x9c>)
  8001838:	4a1f      	ldr	r2, [pc, #124]	@ (80018b8 <MX_TIM1_Init+0xa0>)
  800183a:	601a      	str	r2, [r3, #0]
-  htim1.Init.Prescaler = 31;
+  htim1.Init.Prescaler = 5;
  800183c:	4b1d      	ldr	r3, [pc, #116]	@ (80018b4 <MX_TIM1_Init+0x9c>)
- 800183e:	221f      	movs	r2, #31
+ 800183e:	2205      	movs	r2, #5
  8001840:	605a      	str	r2, [r3, #4]
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
  8001842:	4b1c      	ldr	r3, [pc, #112]	@ (80018b4 <MX_TIM1_Init+0x9c>)
  8001844:	2200      	movs	r2, #0
  8001846:	609a      	str	r2, [r3, #8]
-  htim1.Init.Period = 99;
+  htim1.Init.Period = 120;
  8001848:	4b1a      	ldr	r3, [pc, #104]	@ (80018b4 <MX_TIM1_Init+0x9c>)
- 800184a:	2263      	movs	r2, #99	@ 0x63
+ 800184a:	2278      	movs	r2, #120	@ 0x78
  800184c:	60da      	str	r2, [r3, #12]
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
  800184e:	4b19      	ldr	r3, [pc, #100]	@ (80018b4 <MX_TIM1_Init+0x9c>)

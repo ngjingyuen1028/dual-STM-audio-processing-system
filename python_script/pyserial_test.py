@@ -60,8 +60,8 @@ def record(duration_s):
         print(f"Warning only received {len(raw_bytes)} / {total_bytes}")
     
     data = np.frombuffer(raw_bytes, dtype='<i2').astype(np.float64)
-    data = (data - data.min()) / (data.max() - data.min())  # 0.0 to 1.0
-    data = np.round(data * 65535 - 32768).astype(np.int16)          # -32768 to 32767
+    # data = (data - data.min()) / (data.max() - data.min())  # 0.0 to 1.0
+    # data = np.round(data * 65535 - 32768).astype(np.int16)          # -32768 to 32767
 
     return data    
 

@@ -213,8 +213,9 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void HAL_SPI_RxHalfCpltCallback(SPI_HandleTypeDef *hspi){
 	if (hspi->Instance == SPI1){
+        HAL_GPIO_TogglePin(Test2_GPIO_Port, Test2_Pin);
 		Process_Audio_Chunk(&rxBuffer[0], txBuffer1, CHUNK_SIZE);
-
+        HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 1);
 		HAL_UART_Transmit_DMA(&huart2, (uint8_t*)txBuffer1, CHUNK_SIZE*2);
 
 	}
@@ -222,8 +223,10 @@ void HAL_SPI_RxHalfCpltCallback(SPI_HandleTypeDef *hspi){
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 	if (hspi->Instance == SPI1){
+        HAL_GPIO_TogglePin(Test2_GPIO_Port, Test2_Pin);
 		Process_Audio_Chunk(&rxBuffer[CHUNK_SIZE], txBuffer2, CHUNK_SIZE);
 
+        HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, 1);
 		HAL_UART_Transmit_DMA(&huart2, (uint8_t*)txBuffer2, CHUNK_SIZE*2);
 
         hspi1.State = HAL_SPI_STATE_READY;
@@ -301,6 +304,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         	}
             state = RUNNING;
             hspi1.State = HAL_SPI_STATE_READY;
+            HAL_GPIO_TogglePin(Test2_GPIO_Port, Test2_Pin);
             HAL_SPI_Receive_DMA(&hspi1,(uint8_t *)rxBuffer, CHUNK_SIZE*2);
             HAL_UART_Transmit(&huart1, &START, 1, HAL_MAX_DELAY);
             HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt so that user can stop the processing process in the stm
@@ -581,7 +585,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, Test2_Pin|LD3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : Test_Pin */
   GPIO_InitStruct.Pin = Test_Pin;
@@ -590,12 +594,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(Test_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : LD3_Pin */
-  GPIO_InitStruct.Pin = LD3_Pin;
+  /*Configure GPIO pins : Test2_Pin LD3_Pin */
+  GPIO_InitStruct.Pin = Test2_Pin|LD3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LD3_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pin : Distance_Pin */
   GPIO_InitStruct.Pin = Distance_Pin;

@@ -84,7 +84,7 @@ uint16_t echo_rising, echo_falling;
 
 static void SPI1_WriteByte(uint16_t tx_byte){
 	while(!LL_SPI_IsActiveFlag_TXE(SPI1)){;}
-	LL_SPI_TransmitData8(SPI1, tx_byte);
+	LL_SPI_TransmitData16(SPI1, tx_byte);
 	while(LL_SPI_IsActiveFlag_BSY(SPI1)){;}
 	LL_SPI_ClearFlag_OVR(SPI1);
 }
