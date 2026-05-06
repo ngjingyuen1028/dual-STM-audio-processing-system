@@ -288,13 +288,11 @@ int main(void)
 	  };
 
 	  while (state == RUNNING && mode == DISTANCE_TRIGGERED){
-		  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-		  HAL_Delay(150);
+		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, 1);
 	  };
 
 	  while (state == OUT_OF_DISTANCE && mode == DISTANCE_TRIGGERED){
-		  HAL_GPIO_TogglePin(LD3_GPIO_Port, LD3_Pin);
-		  HAL_Delay(500);
+		  HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,0);
 	  }
 
   }

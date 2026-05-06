@@ -51,15 +51,18 @@ def record(duration_s):
     return data    
 
 def save_recording(rawdata, choices):
-    duration = len(rawdata) / SAMPLE_RATE
+    data = np.array(rawdata)
+    data = (data - data.min())/data.max()
+    data *= 255
+    data = data.astype(np.uint8)
+    duration = len(data) / SAMPLE_RATE
     print(f"\n Saved recording for {duration:.1f} seconds.")
-
     if '1' in choices:
-        save_wav(rawdata, duration)
+        save_wav(data, duration)
     if '2' in choices:
-        save_plot(rawdata, duration)
+        save_plot(data, duration)
     if '3' in choices:
-        save_csv(rawdata, duration)
+        save_csv(data, duration)
 
 def manual_recording_mode():
 
@@ -132,7 +135,7 @@ def distance_trigger_mode():
         print("\n  Recording discarded. Returning to main menu.")
         return
     
-    ser = serial.Serial(PORT, BAUD_RATE, timeout=None)
+    ser = serial.Serial(PORT, BAUD_RATE, timeout=0.5)
     ser.write(bytes([START_BYTE]))
 
     cur = [] #accumulate samples for the current file
@@ -146,8 +149,12 @@ def distance_trigger_mode():
 
     try:
         while True:
-            print("loop head")
+
             byte = ser.read(1)
+            if not byte:
+                continue
+
+            print("Registered a byte")
             value = byte[0]
 
             #Checking for the last 4 garbage bytes
@@ -189,7 +196,6 @@ def main_menu():
         print("  ─────────────────────────────")
         print("  [1] Manual Recording Mode")
         print("  [2] Distance Triggering Mode")
-        print("  [0] Exit")
         print("  ─────────────────────────────")
         
         while True:
@@ -207,22 +213,28 @@ def main_menu():
         elif choice == '2':
             distance_trigger_mode()
             send_stop_and_verify()
-        elif choice == '0':
-            print("\n  Exiting. Goodbye!\n")
-            break
 
-        print("  WOULD YOU LIKE TO RECORD AGAIN?: ")
-        print("  ─────────────────────────────")
-        print("  [1] Record again")
-        print("  [0] Exit")
-        print("  ─────────────────────────────")
+        while True:
+            print("  WOULD YOU LIKE TO RECORD AGAIN?: ")
+            print("  ─────────────────────────────")
+            print("  [1] Record again")
+            print("  [0] Exit")
+            print("  ─────────────────────────────")
 
-        if choice == '1':
-            end = 0
-            break
-        elif choice == '0':
-            print("\n  Exiting. Goodbye!\n")
-            break
+            choice = input("\n  Enter your choice: ")
+
+            valid  = [0,1]
+            if int(choice) not in valid:
+                print("Invalid Input")
+                continue
+
+            if choice == '1':
+                end = True
+                break
+            elif choice == '0':
+                end = False
+                print("\n  Exiting. Goodbye!\n")
+                break
  
 # ── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == '__main__':

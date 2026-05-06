@@ -10,7 +10,9 @@ import os
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
 BAUD_RATE   = 115200        # Must match the STM32's UART baud rate
 SAMPLE_RATE = 10000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
-OUTPUT_FILE = 'audio/task2.wav' # Change to WHEREVER YOU WANT
+OUTPUT_FILE_WAV_DIR = 'outputs/audio/' # Change to WHEREVER YOU WANT
+OUTPUT_FILE_CSV_DIR = 'outputs/csv_files/' # Change to WHEREVER YOU WANT
+OUTPUT_FILE_PNG_DIR = 'outputs/png_files/' # Change to WHEREVER YOU WANT
 TEAM_ID = 'J08'
 
 
@@ -24,17 +26,17 @@ def get_output_filename(duration_s):
 
 def save_wav(data, duration_s):
     #Write WAV file
-    filename = get_output_filename(duration_s)
-    with wave.open(OUTPUT_FILE, 'wb') as wf:
+    filename = OUTPUT_FILE_WAV_DIR + get_output_filename(duration_s) + "wav"
+    with wave.open(filename, 'wb') as wf:
         wf.setnchannels(1)           # Mono
         wf.setsampwidth(1)           # 8-bit samples = 1 byte per sample
         wf.setframerate(SAMPLE_RATE) # Sample rate in Hz
         wf.writeframes(data.tobytes())
     
-        print(f"Audio saved to '{OUTPUT_FILE}' ({len(data)} samples, {duration_s}s")
+        print(f"Audio saved to '{filename}' ({len(data)} samples, {duration_s}s")
 
 def save_plot(data, duration_s):
-    filename = get_output_filename(duration_s, 'png')
+    filename = OUTPUT_FILE_PNG_DIR + get_output_filename(duration_s) + "png"
  
     # Build a time axis in seconds (one point per sample)
     time_axis = np.linspace(0, len(data) / SAMPLE_RATE, num=len(data))
@@ -56,8 +58,7 @@ def save_plot(data, duration_s):
     print(f"  [✓] Waveform plot saved: {filename}")
 
 def save_csv(data, duration_s):
-    filename = get_output_filename(duration_s, 'csv')
-
+    filename = OUTPUT_FILE_CSV_DIR + get_output_filename(duration_s) + 'csv'
     header_df = pd.DataFrame([SAMPLE_RATE], columns=['samples'])
     samples_df = pd.DataFrame(data, columns=['samples'])
     whole_df = pd.concat([header_df, samples_df], ignore_index=True)
@@ -74,7 +75,7 @@ def save_csv(data, duration_s):
 
 def prompt_output_format():
     print("\n  What format would you like to save?")
-    print("  Enter one or more numbers separated by spaces (e.g. '1 2').")
+    print("  Enter one or more numbers separated by spaces (e.g. '1 2 3').")
     print("  ─────────────────────────────")
     print("  [1] WAV file")
     print("  [2] PNG waveform plot")
