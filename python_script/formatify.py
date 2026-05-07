@@ -5,11 +5,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-
-
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
 BAUD_RATE   = 921600        # Must match the STM32's UART baud rate
-SAMPLE_RATE = 10000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
+SAMPLE_RATE = 22050          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
 TEAM_ID = 'J08'
 
 def get_output_folder(duration_s):

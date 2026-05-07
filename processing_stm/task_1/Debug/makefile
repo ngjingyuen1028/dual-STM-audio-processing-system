@@ -60,8 +60,8 @@ all: main-build
 main-build: task_1.elf secondary-outputs
 
 # Tool invocations
-task_1.elf task_1.map: $(OBJS) $(USER_OBJS) C:\Users\Jing\ Yuen\OneDrive\Desktop\2026\ SEM\ 1\ECE\ 2071\prev\processing_stm\task_1\STM32L432KCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "task_1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\prev\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+task_1.elf task_1.map: $(OBJS) $(USER_OBJS) C:\Users\Jing\ Yuen\OneDrive\Desktop\2026\ SEM\ 1\ECE\ 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "task_1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

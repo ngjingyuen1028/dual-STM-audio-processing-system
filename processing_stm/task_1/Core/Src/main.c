@@ -71,11 +71,15 @@ Mode operation_mode = MANUAL_RECORDING;
 uint8_t mode;
 uint8_t instruction;
 uint8_t received_confirmation;
-uint8_t rxBuffer[256];
-uint8_t average;
+uint16_t rxBuffer[256];
+uint16_t history[2];
+uint16_t average;
 uint8_t counter = 0;
 uint8_t initialise = 0;
+uint8_t downsample = 0;
+uint16_t downsample_buffer[2] = {0};
 uint16_t cumulative_sample;
+uint16_t chosen;
 //
 //uint16_t rxBuffer[CHUNK_SIZE*2];
 //uint16_t txBuffer1[CHUNK_SIZE];
@@ -146,6 +150,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             average = 0;
             initialise = 0;
             cumulative_sample = 0;
+            downsample = 0;
 //        	window_idx = 0;
 //        	for (int i = 0; i< WINDOW_SIZE; i++){
 //        		window[i] = 0;
@@ -158,44 +163,72 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             state = RUNNING;
             huart2.gState = HAL_UART_STATE_READY;
             hspi1.State = HAL_SPI_STATE_READY;
-            HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
+            HAL_SPI_Receive_DMA(&hspi1,(uint8_t*)(downsample_buffer + downsample), 1);
         }
     }
 }
 
 // called whenever receive something from SPI
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
-//	HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
-//  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
 
 	if (hspi->Instance == SPI1) {
+//		HAL_GPIO_WritePin(Test2_GPIO_Port, Test2_Pin,1);
+		downsample ^= 0x1;
+		if (downsample == 0){
+			uint16_t value = (downsample_buffer[0] >> 1) + (downsample_buffer[1] >> 1);
 
-		counter++;
-		if (counter == WINDOW_SIZE){ // loops the counter around for each index in the window size
-			counter = 0;
-//				HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
+			if (initialise >= 2){
 
-		}
-		if (initialise >= WINDOW_SIZE-1) // doesn't send first few datapoints until average can be computed
-		{
-			HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
-			cumulative_sample = 0; // calculates average
-			for (uint8_t i = 0; i < WINDOW_SIZE; i++)
-			{
-				cumulative_sample += rxBuffer[i];
+				uint16_t val1 = history[0];
+				uint16_t val2 = history[1];
+
+				if ((val1 <= val2) && (val1 <= value)){
+					chosen = (value <= val2)? value : val2;
+				} else if ((val2 <= val1) && (val2 <= value)){
+					chosen = (value <= val1) ? value : val1;
+				} else{
+					chosen = (val1 <= val2) ? val1 : val2;
+				};
+
+				history[1] = history[0];
+				history[0] = value;
+
+			} else{
+				if (initialise){
+					history[1] = value;
+				} else{
+					history[0] = value;
+				}
 			}
+			rxBuffer[counter] = chosen;
+			counter++;
+			if (counter == WINDOW_SIZE){ // loops the counter around for each index in the window size
+				counter = 0;
+	//				HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
+			}
+			if (initialise >= WINDOW_SIZE-1) // doesn't send first few datapoints until average can be computed
+			{
+	//			HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
+				cumulative_sample = 0; // calculates average
+				for (uint8_t i = 0; i < WINDOW_SIZE; i++)
+				{
+					cumulative_sample += rxBuffer[i];
+				}
 
-			average = (uint8_t)(cumulative_sample >> 3);
+				average = cumulative_sample >> 3;
 
-			HAL_UART_Transmit_DMA(&huart2, &average, 1);
-			HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,0);
+				uint8_t data_for_transmission = (uint8_t)(average >> 2);
 
-		} else {
-			initialise ++;
+				HAL_UART_Transmit_DMA(&huart2, &data_for_transmission, 1);
+				HAL_GPIO_WritePin(Test2_GPIO_Port, Test2_Pin,1);
+	//			HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,0);
+
+			} else {
+				initialise ++;
+			}
 		}
 
-		HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter, 1);
-
+		HAL_SPI_Receive_DMA(&hspi1, (uint8_t*)(downsample_buffer + downsample), 1);
 	}
 }
 //void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
@@ -266,7 +299,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     {
         // fires when DMA finishes transmitting all bytes
         // safe to transmit next sample here
-    	HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,0);
+		HAL_GPIO_WritePin(Test2_GPIO_Port, Test2_Pin,0);
     }
 }
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
@@ -319,6 +352,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
             average = 0;
             initialise = 0;
             cumulative_sample = 0;
+            downsample = 0;
 //        	window_idx = 0;
 //        	running_sum = 0;
 //        	for (int i = 0; i < WINDOW_SIZE; i++){
@@ -330,7 +364,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 //        	}
             state = RUNNING;
             hspi1.State = HAL_SPI_STATE_READY;
-            HAL_SPI_Receive_DMA(&hspi1,rxBuffer + counter, 1);
+            HAL_SPI_Receive_DMA(&hspi1, (uint8_t*)(downsample_buffer + downsample), 1);
             HAL_UART_Transmit(&huart1, &START, 1, HAL_MAX_DELAY);
             HAL_UART_Receive_IT(&huart2, &instruction, 1);  // rearm the interrupt so that user can stop the processing process in the stm
         }
@@ -376,7 +410,7 @@ int main(void)
 
   __HAL_SPI_ENABLE(&hspi1);  // add this line BEFORE the DMA call
   HAL_UART_Receive_IT(&huart2, &instruction, 1);
-  HAL_SPI_Receive_DMA(&hspi1, rxBuffer + counter,1);
+  HAL_SPI_Receive_DMA(&hspi1, (uint8_t*)(downsample_buffer + downsample) ,1);
 
 
   /* USER CODE END 2 */
@@ -480,7 +514,7 @@ static void MX_SPI1_Init(void)
   hspi1.Instance = SPI1;
   hspi1.Init.Mode = SPI_MODE_SLAVE;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES_RXONLY;
-  hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi1.Init.DataSize = SPI_DATASIZE_10BIT;
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_HARD_INPUT;
@@ -607,17 +641,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, Test_Pin|Test2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : Test_Pin */
-  GPIO_InitStruct.Pin = Test_Pin;
+  /*Configure GPIO pins : Test_Pin Test2_Pin */
+  GPIO_InitStruct.Pin = Test_Pin|Test2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(Test_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : LD3_Pin */
   GPIO_InitStruct.Pin = LD3_Pin;

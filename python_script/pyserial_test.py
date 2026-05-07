@@ -9,7 +9,7 @@ from formatify import save_csv, save_plot, save_wav, prompt_output_format
 # Config
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
 BAUD_RATE   = 921600        # Must match the STM32's UART baud rate
-SAMPLE_RATE = 10000          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
+SAMPLE_RATE = 22050          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
 OUTPUT_FILE = 'audio/task2.wav' # Change to WHEREVER YOU WANT
 TEAM_ID = 'J08'
 COMFIRM_BYTE = 0x1B 

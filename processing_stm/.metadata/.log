@@ -519,3 +519,21 @@ java.io.FileNotFoundException: C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\EC
 
 !ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-05-06 18:45:00.136
 !MESSAGE Started RMI Server, listening on port 41337
+!SESSION 2026-05-07 18:01:43.090 -----------------------------------------------
+eclipse.buildId=Version 1.18.0
+java.version=21.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_MY
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY org.eclipse.core.resources 2 10035 2026-05-07 18:01:57.768
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2026-05-07 18:02:03.161
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2026-05-07 18:02:03.163
+!MESSAGE Log4j2 initialized with config file C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2026-05-07 18:02:08.648
+!MESSAGE Started RMI Server, listening on port 41337

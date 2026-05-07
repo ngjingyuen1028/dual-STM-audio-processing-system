@@ -2698,3 +2698,296 @@ arm-none-eabi-size  task_1.elf
   22444	     12	   2356	  24812	   60ec	task_1.elf
 Finished building: default.size.stdout
  
+19:48:50 **** Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22420	     12	   2356	  24788	   60d4	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+19:48:59 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22420	     12	   2356	  24788	   60d4	task_1.elf
+Finished building: default.size.stdout
+ 
+20:32:50 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/stm32l4xx_hal_msp.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/stm32l4xx_hal_msp.d" -MT"Core/Src/stm32l4xx_hal_msp.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32l4xx_hal_msp.o"
+arm-none-eabi-gcc "../Core/Src/stm32l4xx_it.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/stm32l4xx_it.d" -MT"Core/Src/stm32l4xx_it.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32l4xx_it.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22428	     12	   2356	  24796	   60dc	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+20:32:56 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22428	     12	   2356	  24796	   60dc	task_1.elf
+Finished building: default.size.stdout
+ 
+20:46:56 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22496	     12	   2356	  24864	   6120	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+20:47:01 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22496	     12	   2356	  24864	   6120	task_1.elf
+Finished building: default.size.stdout
+ 
+20:53:26 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22496	     12	   2356	  24864	   6120	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+20:53:32 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22496	     12	   2356	  24864	   6120	task_1.elf
+Finished building: default.size.stdout
+ 
+20:56:48 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22428	     12	   2356	  24796	   60dc	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+20:56:51 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22428	     12	   2356	  24796	   60dc	task_1.elf
+Finished building: default.size.stdout
+ 
+21:14:54 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:174:17: error: 'down_sample' undeclared (first use in this function); did you mean 'downsample'?
+  174 |                 down_sample ^= 0x1;
+      |                 ^~~~~~~~~~~
+      |                 downsample
+../Core/Src/main.c:174:17: note: each undeclared identifier is reported only once for each function it appears in
+../Core/Src/main.c:177:48: error: initializer element is not constant
+  177 |                         static uint8_t value = (downsample_buffer[0] >> 1) + (downsample_buffer[1] >> 1);
+      |                                                ^
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+21:15:11 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:175:21: error: 'down_sample' undeclared (first use in this function); did you mean 'downsample'?
+  175 |                 if (down_sample == 0){
+      |                     ^~~~~~~~~~~
+      |                     downsample
+../Core/Src/main.c:175:21: note: each undeclared identifier is reported only once for each function it appears in
+../Core/Src/main.c:177:48: error: initializer element is not constant
+  177 |                         static uint8_t value = (downsample_buffer[0] >> 1) + (downsample_buffer[1] >> 1);
+      |                                                ^
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+21:15:29 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:177:48: error: initializer element is not constant
+  177 |                         static uint8_t value = (downsample_buffer[0] >> 1) + (downsample_buffer[1] >> 1);
+      |                                                ^
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+21:16:13 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22508	     12	   2356	  24876	   612c	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+21:16:17 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22508	     12	   2356	  24876	   612c	task_1.elf
+Finished building: default.size.stdout
+ 
+21:42:40 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_GPIO_EXTI_Callback':
+../Core/Src/main.c:164:58: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  164 |             HAL_SPI_Receive_DMA(&hspi1,downsample_buffer + downsample, 1);
+      |                                        ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+      |                                                          |
+      |                                                          uint16_t * {aka short unsigned int *}
+In file included from ../Core/Inc/stm32l4xx_hal_conf.h:430,
+                 from ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:29,
+                 from ../Core/Inc/main.h:30,
+                 from ../Core/Src/main.c:20:
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:204:63: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  204 |                 HAL_SPI_Receive_DMA(&hspi1, downsample_buffer + downsample, 1);
+      |                                             ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+      |                                                               |
+      |                                                               uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:342:59: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  342 |             HAL_SPI_Receive_DMA(&hspi1, downsample_buffer + downsample, 1);
+      |                                         ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+      |                                                           |
+      |                                                           uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:388:49: warning: passing argument 2 of 'HAL_SPI_Receive_DMA' from incompatible pointer type [-Wincompatible-pointer-types]
+  388 |   HAL_SPI_Receive_DMA(&hspi1, downsample_buffer + downsample ,1);
+      |                               ~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+      |                                                 |
+      |                                                 uint16_t * {aka short unsigned int *}
+../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_spi.h:805:73: note: expected 'uint8_t *' {aka 'unsigned char *'} but argument is of type 'uint16_t *' {aka 'short unsigned int *'}
+  805 | HAL_StatusTypeDef HAL_SPI_Receive_DMA(SPI_HandleTypeDef *hspi, uint8_t *pData, uint16_t Size);
+      |                                                                ~~~~~~~~~^~~~~
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22524	     12	   2620	  25156	   6244	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+21:44:07 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22524	     12	   2620	  25156	   6244	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+21:44:11 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22524	     12	   2620	  25156	   6244	task_1.elf
+Finished building: default.size.stdout
+ 
+21:49:33 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22536	     12	   2620	  25168	   6250	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+21:49:41 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22536	     12	   2620	  25168	   6250	task_1.elf
+Finished building: default.size.stdout
+ 
+22:11:41 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_SPI_RxCpltCallback':
+../Core/Src/main.c:197:37: error: 'initialize' undeclared (first use in this function); did you mean 'initialise'?
+  197 |                                 if (initialize){
+      |                                     ^~~~~~~~~~
+      |                                     initialise
+../Core/Src/main.c:197:37: note: each undeclared identifier is reported only once for each function it appears in
+make: *** [Core/Src/subdir.mk:34: Core/Src/main.o] Error 1
+"make -j12 all" terminated with exit code 2. Build might be incomplete.
+22:11:59 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "task_1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\ECE 2071\task2_onwards\processing_stm\task_1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="task_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: task_1.elf
+ 
+arm-none-eabi-size  task_1.elf 
+arm-none-eabi-objdump -h -S task_1.elf  > "task_1.list"
+   text	   data	    bss	    dec	    hex	filename
+  22692	     12	   2628	  25332	   62f4	task_1.elf
+Finished building: default.size.stdout
+ 
+Finished building: task_1.list
+ 
+22:12:04 **** Incremental Build of configuration Debug for project task_1 ****
+make -j12 all 
+arm-none-eabi-size  task_1.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22692	     12	   2628	  25332	   62f4	task_1.elf
+Finished building: default.size.stdout
+ 
