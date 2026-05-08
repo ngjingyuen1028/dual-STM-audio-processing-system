@@ -1,4 +1,4 @@
-19:01:37 **** Incremental Build of configuration Debug for project processing ****
+00:44:05 **** Incremental Build of configuration Debug for project processing ****
 make -j12 all 
 arm-none-eabi-size  processing.elf 
    text	   data	    bss	    dec	    hex	filename
@@ -6,5 +6,5 @@ arm-none-eabi-size  processing.elf
 Finished building: default.size.stdout
  
 
-19:01:38 Build Finished. 0 errors, 0 warnings. (took 334ms)
+00:44:06 Build Finished. 0 errors, 0 warnings. (took 282ms)
 

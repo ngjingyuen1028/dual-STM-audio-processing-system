@@ -211,19 +211,11 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 
 			if (initialise == WINDOW_SIZE - 1) // doesn't send first few datapoints until average can be computed
 			{
-//	//			HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
-//				cumulative_sample = 0; // calculates average
-//				for (uint8_t i = 0; i < WINDOW_SIZE; i++)
-//				{
-//					cumulative_sample += rxBuffer[i];
-//				}
-
 				average = cumulative_sample >> 3;
 				static uint8_t data_for_transmission;
 				data_for_transmission = (uint8_t)(average >> 2);
 
 				HAL_UART_Transmit_DMA(&huart2, &data_for_transmission, 1);
-//				HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,0);
 				initialise++;
 			}else if (initialise > WINDOW_SIZE - 1){
 				cumulative_sample -= prev;
@@ -232,16 +224,14 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 				data_for_transmission = (uint8_t)(average >> 2);
 
 				HAL_UART_Transmit_DMA(&huart2, &data_for_transmission, 1);
-//				HAL_GPIO_WritePin(Test2_GPIO_Port, Test2_Pin,0);
 
 			} else {
 				initialise ++;
 			};
 
 			counter++;
-			if (counter == WINDOW_SIZE){ // loops the counter around for each index in the window size
+			if (counter == WINDOW_SIZE){
 				counter = 0;
-	//				HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
 			}
 		}
 

@@ -96,7 +96,6 @@ uint16_t echo_rising, echo_falling;
 
 /* USER CODE END PV */
 
-
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
