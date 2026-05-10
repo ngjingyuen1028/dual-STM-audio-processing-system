@@ -851,3 +851,66 @@ arm-none-eabi-size  processing.elf
   22760	     12	   2628	  25400	   6338	processing.elf
 Finished building: default.size.stdout
  
+17:25:22 **** Incremental Build of configuration Debug for project processing ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "processing.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\Project\processing\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="processing.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: processing.elf
+ 
+arm-none-eabi-size  processing.elf 
+arm-none-eabi-objdump -h -S processing.elf  > "processing.list"
+   text	   data	    bss	    dec	    hex	filename
+  22760	     12	   2628	  25400	   6338	processing.elf
+Finished building: default.size.stdout
+ 
+Finished building: processing.list
+ 
+17:25:24 **** Incremental Build of configuration Debug for project sampling ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "sampling.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\Project\sampling\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="sampling.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: sampling.elf
+ 
+arm-none-eabi-size  sampling.elf 
+arm-none-eabi-objdump -h -S sampling.elf  > "sampling.list"
+   text	   data	    bss	    dec	    hex	filename
+  30912	     12	   2356	  33280	   8200	sampling.elf
+Finished building: default.size.stdout
+ 
+Finished building: sampling.list
+ 
+17:25:39 **** Incremental Build of configuration Debug for project sampling ****
+make -j12 all 
+arm-none-eabi-size  sampling.elf 
+   text	   data	    bss	    dec	    hex	filename
+  30912	     12	   2356	  33280	   8200	sampling.elf
+Finished building: default.size.stdout
+ 
+17:28:33 **** Incremental Build of configuration Debug for project processing ****
+make -j12 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "processing.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\Jing Yuen\OneDrive\Desktop\2026 SEM 1\Project\processing\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="processing.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: processing.elf
+ 
+arm-none-eabi-size  processing.elf 
+arm-none-eabi-objdump -h -S processing.elf  > "processing.list"
+   text	   data	    bss	    dec	    hex	filename
+  22788	     12	   2628	  25428	   6354	processing.elf
+Finished building: default.size.stdout
+ 
+Finished building: processing.list
+ 
+17:28:34 **** Incremental Build of configuration Debug for project sampling ****
+make -j12 all 
+arm-none-eabi-size  sampling.elf 
+   text	   data	    bss	    dec	    hex	filename
+  30912	     12	   2356	  33280	   8200	sampling.elf
+Finished building: default.size.stdout
+ 
+17:28:38 **** Incremental Build of configuration Debug for project processing ****
+make -j12 all 
+arm-none-eabi-size  processing.elf 
+   text	   data	    bss	    dec	    hex	filename
+  22788	     12	   2628	  25428	   6354	processing.elf
+Finished building: default.size.stdout
+ 

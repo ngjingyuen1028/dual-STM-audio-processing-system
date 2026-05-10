@@ -1,4 +1,4 @@
-00:43:59 **** Incremental Build of configuration Debug for project sampling ****
+17:28:34 **** Incremental Build of configuration Debug for project sampling ****
 make -j12 all 
 arm-none-eabi-size  sampling.elf 
    text	   data	    bss	    dec	    hex	filename
@@ -6,5 +6,5 @@ arm-none-eabi-size  sampling.elf
 Finished building: default.size.stdout
  
 
-00:44:00 Build Finished. 0 errors, 0 warnings. (took 285ms)
+17:28:34 Build Finished. 0 errors, 0 warnings. (took 325ms)
 

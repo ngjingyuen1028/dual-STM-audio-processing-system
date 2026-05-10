@@ -3,7 +3,7 @@ import time
 import sys
  
 # ── Configuration ─────────────────────────────────────────────────────────────
-PORT             = 'COM7'    # Change to your Processing STM32's COM port
+PORT             = 'COM7'    # Change to Processing STM32's COM port
 BAUD_RATE        = 921600
 TRIGGER_BYTE      = 0x22      # Byte sent to instruct both STM32s to enter  Trigger Mode (18 decimal)
 CONFIRM_BYTE     = 0x1B      # Byte expected back from Processing STM32 (27 decimal)

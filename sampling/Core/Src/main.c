@@ -1,6 +1,7 @@
 /* USER CODE BEGIN Header */
 // SAMPLING STM Source Code - built for dual STM audio processing system
-// Author : Jing Yuen Ng
+// Author : Jing Yuen Ng (35657774)
+
 /**
   ******************************************************************************
   * @file           : main.c

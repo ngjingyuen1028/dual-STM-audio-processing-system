@@ -1,5 +1,6 @@
 /* USER CODE BEGIN Header */
-// Processing STM Code
+// Processing STM Code - built for dual STM audio processing project
+// Author : Jing Yuen Ng (35657774)
 /**
   ******************************************************************************
   * @file           : main.c
@@ -82,12 +83,6 @@ uint16_t downsample_buffer[2] = {0};
 uint16_t cumulative_sample = 0;
 uint16_t chosen;
 uint16_t prev;
-//uint16_t rxBuffer[CHUNK_SIZE*2];
-//uint16_t txBuffer1[CHUNK_SIZE];
-//uint16_t txBuffer2[CHUNK_SIZE];
-//uint32_t running_sum = 0;
-//uint16_t window[WINDOW_SIZE] = {0};
-//uint8_t window_idx = 0;
 
 /* USER CODE END PV */
 
@@ -104,21 +99,6 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-//void Process_Audio_Chunk(uint16_t* input_ptr, uint16_t* output_ptr, uint16_t size){
-//	for(int i = 0; i<size; i++){
-//		running_sum -= window[window_idx];
-//		window[window_idx] = input_ptr[i];
-//		running_sum += window[window_idx];
-//
-//		window_idx++;
-//		if(window_idx >= WINDOW_SIZE){
-//			window_idx = 0;
-//		}
-//
-//		output_ptr[i] = running_sum >> 4;
-//	}
-//}
-
 
 // To deal with echo pin from sampling stm
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
@@ -152,15 +132,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
             initialise = 0;
             cumulative_sample = 0;
             downsample = 0;
-//        	window_idx = 0;
-//        	for (int i = 0; i< WINDOW_SIZE; i++){
-//        		window[i] = 0;
-//        	}
-//
-//        	for (int i = 0; i < CHUNK_SIZE * 2; i++){
-//        		rxBuffer[i] = 0;
-//        	}
-//        	running_sum = 0;
             state = RUNNING;
             huart2.gState = HAL_UART_STATE_READY;
             hspi1.State = HAL_SPI_STATE_READY;
@@ -214,7 +185,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 				average = cumulative_sample >> 3;
 				static uint8_t data_for_transmission;
 				data_for_transmission = (uint8_t)(average >> 2);
-
+				HAL_GPIO_WritePin(Test2_GPIO_Port, Test2_Pin,1);
 				HAL_UART_Transmit_DMA(&huart2, &data_for_transmission, 1);
 				initialise++;
 			}else if (initialise > WINDOW_SIZE - 1){
@@ -222,7 +193,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 				average = cumulative_sample >> 3;
 				static uint8_t data_for_transmission;
 				data_for_transmission = (uint8_t)(average >> 2);
-
+				HAL_GPIO_WritePin(Test2_GPIO_Port, Test2_Pin,1);
 				HAL_UART_Transmit_DMA(&huart2, &data_for_transmission, 1);
 
 			} else {
@@ -238,67 +209,6 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
 		HAL_SPI_Receive_DMA(&hspi1, (uint8_t*)(downsample_buffer + downsample), 1);
 	}
 }
-//void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
-//  HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
-//  HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
-//
-//    if (hspi->Instance == SPI1) {
-//        downsample_position ^= 1;
-
-//        if (downsample_position == 0){
-//            downsample_average = (downsample[0]+downsample[1]) >> 1;
-//
-//            rxBuffer[counter] = downsample_average;
-//
-//            counter++;
-//            if (counter == window_size){ // loops the counter around for each index in the window size
-//                counter = 0;
-//    //              HAL_GPIO_TogglePin(Test_GPIO_Port, Test_Pin);
-//
-//            }
-//            if (initialise >= window_size-1) // doesn't send first few datapoints until average can be computed
-//            {
-//
-//                cumulative_sample = 0; // calculates average
-//                for (uint8_t i = 0; i < window_size; i++)
-//                {
-//                    cumulative_sample += rxBuffer[i];
-//                }
-//
-//                average = (uint16_t)(cumulative_sample/window_size);
-//                HAL_GPIO_WritePin(Test_GPIO_Port, Test_Pin,1);
-//                HAL_UART_Transmit_DMA(&huart2, &average, 2);
-//
-//
-//            } else {
-//                initialise ++;
-//            }
-//        }
-//
-//        HAL_SPI_Receive_DMA(&hspi1, downsample + downsample_position, 1);
-//
-//    }
-//}
-
-//void HAL_SPI_RxHalfCpltCallback(SPI_HandleTypeDef *hspi){
-//	if (hspi->Instance == SPI1){
-//		Process_Audio_Chunk(&rxBuffer[0], txBuffer1, CHUNK_SIZE);
-//        huart2.gState = HAL_UART_STATE_READY;
-//		HAL_UART_Transmit_DMA(&huart2, (uint8_t*)txBuffer1, CHUNK_SIZE*2);
-//
-//	}
-//}
-//
-//void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi){
-//	if (hspi->Instance == SPI1){
-//		Process_Audio_Chunk(&rxBuffer[CHUNK_SIZE], txBuffer2, CHUNK_SIZE);
-//        huart2.gState = HAL_UART_STATE_READY;
-//		HAL_UART_Transmit_DMA(&huart2, (uint8_t*)txBuffer2, CHUNK_SIZE*2);
-//
-//        hspi1.State = HAL_SPI_STATE_READY;
-//		HAL_SPI_Receive_DMA(&hspi1,(uint8_t *)rxBuffer, CHUNK_SIZE * 2);   // re arm the SPI DMA
-//	}
-//}
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -354,21 +264,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
         }else if (instruction ==  START && state ==  WAIT_FOR_START){
             // reset all the needed parameter before opening the SPI DMA channel
-//            downsample_position = 0;
             counter = 0;
             average = 0;
             initialise = 0;
             cumulative_sample = 0;
             downsample = 0;
-//        	window_idx = 0;
-//        	running_sum = 0;
-//        	for (int i = 0; i < WINDOW_SIZE; i++){
-//        		window[i] = 0;
-//        	};
-//
-//        	for (int i = 0; i < CHUNK_SIZE * 2; i++){
-//        		rxBuffer[i] = 0;
-//        	}
             state = RUNNING;
             hspi1.State = HAL_SPI_STATE_READY;
             HAL_SPI_Receive_DMA(&hspi1, (uint8_t*)(downsample_buffer + downsample), 1);

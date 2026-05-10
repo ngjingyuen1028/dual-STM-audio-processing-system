@@ -9,7 +9,7 @@ from formatify import save_csv, save_plot, save_wav, prompt_output_format
 # Config
 PORT        = 'COM7'        # Change to your Processing STM32's COM port
 BAUD_RATE   = 921600        # Must match the STM32's UART baud rate
-SAMPLE_RATE = 22050          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
+SAMPLE_RATE = 22050      
 OUTPUT_FILE = 'audio/task2.wav' # Change to WHEREVER YOU WANT
 TEAM_ID = 'J08'
 COMFIRM_BYTE = 0x1B 
@@ -26,7 +26,7 @@ END_SEQ_LEN = 4
 def record(duration_s):
     total_samples = SAMPLE_RATE * duration_s  # Total number of bytes to read
     
-    print(f"Recording {duration_s}s of audio at {SAMPLE_RATE} sps ({total_samples} samples)...") #some random shi to make sure code is running
+    print(f"Recording {duration_s}s of audio at {SAMPLE_RATE} sps ({total_samples} samples)...") # to make sure code is running
     print(f"Opening serial port {PORT} at {BAUD_RATE} baud...") #same here
     
     ser = serial.Serial(PORT, BAUD_RATE)
@@ -190,6 +190,7 @@ def distance_trigger_mode():
 def main_menu():
     #Display the main menu and route to the selected mode.
     send_stop_and_verify()
+
 
     end = True
 

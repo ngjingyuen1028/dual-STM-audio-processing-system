@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import os
 
-PORT        = 'COM7'        # Change to your Processing STM32's COM port
-BAUD_RATE   = 921600        # Must match the STM32's UART baud rate
-SAMPLE_RATE = 22050          # Hz — must be >= 5000 (5 ksps). 8000 Hz is standard audio.
+PORT        = 'COM7'        # Change to Processing STM32's COM port
+BAUD_RATE   = 921600        # STM32's UART baud rate
+SAMPLE_RATE = 22050         
 TEAM_ID = 'J08'
 
 def get_output_folder(duration_s):
@@ -22,7 +22,7 @@ def save_wav(data, duration_s):
     filename = folder + "/audio.wav"
     #Write WAV file
     with wave.open(filename, 'wb') as wf:
-        wf.setnchannels(1)           # Mono
+        wf.setnchannels(1)          
         wf.setsampwidth(1)           # 8-bit samples = 1 byte per sample
         wf.setframerate(SAMPLE_RATE) # Sample rate in Hz
         wf.writeframes(data.tobytes())
@@ -34,7 +34,6 @@ def save_plot(data, duration_s):
     os.makedirs(folder, exist_ok=True)
     filename = folder + "/plot.png"
  
-    # Build a time axis in seconds (one point per sample)
     time_axis = np.linspace(0, len(data) / SAMPLE_RATE, num=len(data))
  
     plt.figure(figsize=(12, 4))
