@@ -21,8 +21,6 @@ APPEND_WINDOW = 1
 END_BYTE = 0xFF
 END_SEQ_LEN = 4
 
-
-
 def record(duration_s):
     total_samples = SAMPLE_RATE * duration_s  # Total number of bytes to read
     
@@ -239,6 +237,6 @@ def main_menu():
                 print("\n  Exiting. Goodbye!\n")
                 break
  
-# ── Entry point ───────────────────────────────────────────────────────────────
+# Entry point 
 if __name__ == '__main__':
     main_menu()

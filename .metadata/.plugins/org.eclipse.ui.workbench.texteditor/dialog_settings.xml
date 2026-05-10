@@ -3,6 +3,7 @@
 	<item key="hasShownOverlayPopupBefore" value="true"/>
 	<item key="replaceBarOpen" value="false"/>
 	<list key="searchhistory">
+		<item value="downsample_position"/>
 		<item value="Test2_GPIO_Port"/>
 		<item value="huart2"/>
 		<item value="hdma_usart2_tx"/>

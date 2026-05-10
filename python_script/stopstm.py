@@ -50,7 +50,7 @@ def send_stop_and_verify():
 
     return True
 
-# ── Entry point ───────────────────────────────────────────────────────────────
+# Entry point 
 if __name__ == '__main__':
     success = send_stop_and_verify()
 
